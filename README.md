@@ -5,8 +5,6 @@
 ## Description
 **DESCRIPTION PARAGRAPHS**
 
-|||
-| ---- | ---- |
 |Interface||
 |Documentation||
 |README||
