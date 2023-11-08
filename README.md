@@ -5,6 +5,8 @@
 ## Description
 **DESCRIPTION PARAGRAPHS**
 
+|| Description |
+| ---- | ---- |
 |Interface||
 |Documentation||
 |README||
@@ -19,7 +21,7 @@
 **DESCRIPTION PARAGRAPHS**
 
 ### Dependencies
-|||
+|| Description |
 | ---- | ---- |
 |Tool and Toolkit Inputs||
 |External Inputs||
@@ -27,7 +29,7 @@
 |Formats and Standards||
 
 ### Artifacts
-|||
+|| Description |
 | ---- | ---- |
 |Software Artifacts||
 |Data Outputs||
