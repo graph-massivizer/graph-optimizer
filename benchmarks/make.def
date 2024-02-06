@@ -1,0 +1,41 @@
+#
+# This file is part of the GraphBLAS tutorial materials,
+# Copyright (c) 2018 Carnegie Mellon University and Intel Corporation.
+#
+# THIS SOFTWARE IS PROVIDED "AS IS," WITH NO WARRANTIES WHATSOEVER. CARNEGIE
+# MELLON UNIVERSITY AND INTEL CORPORATION EXPRESSLY DISCLAIMS TO THE FULLEST
+# EXTENT PERMITTED BY LAW ALL EXPRESS, IMPLIED, AND STATUTORY WARRANTIES,
+# INCLUDING, WITHOUT LIMITATION, THE WARRANTIES OF MERCHANTABILITY, FITNESS
+# FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT OF PROPRIETARY RIGHTS.
+#
+# Released under a BSD (SEI)-style license, please see LICENSE.txt for
+# full terms.
+#
+# Authors: Scott McMillan, Timothy G. Mattson
+#
+
+PLATFORM := $(shell uname -s)
+
+CC	= UNKNOW_PLATFORM
+
+ifeq ($(PLATFORM),Linux)
+	CC	= g++ -std=c11 -fopenmp
+	OPTS	= -g
+	#OPTS	= -Ofast -march=native -DNDEBUG
+	#OPTS	= -g -fsanitize=address
+	WFLAGS	= -Wall
+	DEFS	=
+	INCLUDE	= -I$(INCDIR)
+	LIB	= -llagraph -lgraphblas -lm -Wl,-rpath,$(LIBDIR) -L$(LIBDIR)
+endif
+
+ifeq ($(PLATFORM),Darwin)
+	CC	= g++-9 -std=c11 -fopenmp
+	OPTS	= -g
+	WFLAGS	= -Wall
+	DEFS	=
+	INCLUDE	= -I$(INCDIR)
+	LIB	= -llagraphOSX -lgraphblasOSX -lm -Wl,-rpath,$(LIBDIR) -L$(LIBDIR)
+endif
+
+CCFLAGS	= $(OPTS) $(WFLAGS) $(DEFS) $(INCLUDE)

@@ -1,7 +1,5 @@
-PROJECT_ROOT	= ${CURDIR}
-
-INCDIR      = ./include
-LIBDIR      = ./lib
+INCDIR      = /usr/local/include
+LIBDIR      = /usr/local/lib
 
 include make.def
 
@@ -9,7 +7,6 @@ SOURCES		= main.c
 
 OBJECTS		= $(SOURCES:.c=.o)
 TARGETS		= $(SOURCES:.c=)
-HEADERS		= $(wildcard $(INCDIR)/*.h)
 
 all		: $(TARGETS)
 
