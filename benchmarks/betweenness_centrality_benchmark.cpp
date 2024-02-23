@@ -26,19 +26,18 @@ int main(int argc, char **argv) {
 
     GrB_Index num_nodes;
     GrB_Matrix_nrows(&num_nodes, A);
-    vector<int> G_naive[num_nodes];
+    std::vector<int> G_naive[num_nodes];
     GB_matrix_to_vector_array(A, G_naive);
 
     /*
      * Initialization of source nodes
      */
-    int n_sources = 1000;
+    int n_sources = 100;
     GrB_Index sources_GrB[n_sources];
     int sources[n_sources];
     for (int i = 0; i < n_sources; i++) {
         int random = rand();
         int temp = random % num_nodes;
-        temp = i;
         sources_GrB[i] = temp;
         sources[i] = temp;
     }
@@ -48,10 +47,9 @@ int main(int argc, char **argv) {
      **************************************************************************/
     start_time = clock();
     GrB_Vector bc;
-    BC_GB_update(&bc, A, sources_GrB, n_sources);
+    BC_GB(&bc, A, sources_GrB, n_sources);
     time_elapsed = (double)(clock() - start_time) / CLOCKS_PER_SEC;
     printf("Time elapsed GraphBLAS: %f\n", time_elapsed);
-    find_max(bc);
 
 
     /***************************************************************************
@@ -64,7 +62,6 @@ int main(int argc, char **argv) {
     LAGr_Betweenness(&bc, G, sources_GrB, n_sources, msg);
     time_elapsed = (double)(clock() - start_time) / CLOCKS_PER_SEC;
     printf("Time elapsed LAGraph: %f\n", time_elapsed);
-    find_max(bc);
 
 
     /***************************************************************************
@@ -77,7 +74,6 @@ int main(int argc, char **argv) {
     BC_naive(bc_naive, G_naive, sources, n_sources, num_nodes);
     time_elapsed = (double)(clock() - start_time) / CLOCKS_PER_SEC;
     printf("Time elapsed naive: %f\n", time_elapsed);
-    find_max(bc_naive, num_nodes);
 
 
     /***************************************************************************
@@ -88,7 +84,6 @@ int main(int argc, char **argv) {
     BC_brandes(bc_brandes, G_naive, sources, n_sources, num_nodes);
     time_elapsed = (double)(clock() - start_time) / CLOCKS_PER_SEC;
     printf("Time elapsed Brandes: %f\n", time_elapsed);
-    find_max(bc_brandes, num_nodes);
 
 
     // Cleanup

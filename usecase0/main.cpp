@@ -90,8 +90,7 @@ int main(int argc, char **argv)
     /***************************************************************************
      * BGO 4: Find shortest path from root to node with maximum betweenness
      **************************************************************************/
-
-    //TODO
+    
 
     // Cleanup
     GrB_Matrix_free(&A);

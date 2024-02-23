@@ -4,17 +4,27 @@
 #include "GraphBLAS.h"
 #include "suitesparse/LAGraph.h"
 #include <vector>
-using namespace std;
+#include <iostream>
+
+template <typename T>
+void pretty_print_array(T *arr, int n, std::string name) {
+    std::cout << name.c_str() << ": [";
+    for (int i = 0; i < n - 1; i++) {
+        std::cout << std::to_string(arr[i]) << ", ";
+    }
+    std::cout << std::to_string(arr[n - 1]) << "]" << std::endl;
+}
 
 /*
  * Convert a matrix M to a vector array G.
  */
-void GB_matrix_to_vector_array(GrB_Matrix M, vector<int> *G) {
+template <typename T>
+void GB_matrix_to_vector_array(GrB_Matrix M, std::vector<T> *G) {
     GrB_Index num_nodes;
     GrB_Matrix_nrows(&num_nodes, M);
 
     G->resize(num_nodes);
-    for (int i = 0; i < num_nodes; i++) {
+    for (uint i = 0; i < num_nodes; i++) {
         G[i].resize(num_nodes);
     }
 
@@ -23,10 +33,11 @@ void GB_matrix_to_vector_array(GrB_Matrix M, vector<int> *G) {
 
     GrB_Index row_indices[nvals];
     GrB_Index col_indices[nvals];
-    int values[nvals];
-    GrB_Matrix_extractTuples_INT32(row_indices, col_indices, values, &nvals, M);
+    float values[nvals];
 
-    for (int i = 0; i < nvals; i++) {
+    GrB_Matrix_extractTuples_FP32(row_indices, col_indices, values, &nvals, M);
+
+    for (uint i = 0; i < nvals; i++) {
         G[row_indices[i]][col_indices[i]] = values[i];
     }
 }
@@ -51,13 +62,26 @@ void read_graph_GB(GrB_Matrix *M, char *fileName) {
 /*
  * Read a graph into vector array G given a specified fileName.
  */
-void read_graph_vector_array(vector<int> *G, char *fileName) {
+template <typename T>
+void read_graph_vector_array(std::vector<T> *G, char *fileName) {
     GrB_Matrix A;
     read_graph_GB(&A, fileName);
 
-    GB_matrix_to_vector_array(A, G);
+    GB_matrix_to_vector_array<T>(A, G);
 }
 
-
+template <typename T>
+void pretty_print_vector(GrB_Vector v, std::string name) {
+    GrB_Index n;
+    GrB_Vector_size(&n, v);
+    GrB_Index indices[n];
+    float values[n];
+    GrB_Vector_extractTuples_FP32(indices, values, &n, v);
+    std::cout << name.c_str() << ": [";
+    for (uint i = 0; i < n - 1; i++) {
+        std::cout << std::to_string(values[i]) << ", ";
+    }
+    std::cout << values[n - 1] << "]" << std::endl;
+}
 
 #endif

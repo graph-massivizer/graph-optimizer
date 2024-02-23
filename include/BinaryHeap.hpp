@@ -6,20 +6,20 @@
 #include <climits>
 
 using namespace std;
- 
+
 typedef struct{
     int node;
     int key;
 } bnode;
 
 class BinaryHeap{
-    
+
     private:
 
         int size = 0;
         vector<bnode> heap;
         vector<int> pos; // Will be used for decrase_key
-    
+
     public:
 
         // Creates a binary heap with size 0
@@ -138,7 +138,7 @@ class BinaryHeap{
         // Prints the positions of nodes in the heap
         // a:b means node a is at index b in the heap
         void print_pos(){
-            for(int i=0; i<pos.size(); i++){
+            for(uint i=0; i<pos.size(); i++){
                 cout << i << ":" << pos[i] << " ";
             }
             cout << endl;
