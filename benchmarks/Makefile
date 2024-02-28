@@ -1,5 +1,5 @@
 INCDIR      = /usr/local/include
-LIBDIR      = ../bgo
+LIBDIR      = /usr/local/lib
 
 include make.def
 

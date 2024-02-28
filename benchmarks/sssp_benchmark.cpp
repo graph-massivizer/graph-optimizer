@@ -49,7 +49,6 @@ int main(int argc, char **argv) {
     // pretty_print_vector<int>(distances, "distances LAGraph");
     printf("Time elapsed LAGraph: %f\n", time_elapsed);
 
-
     /***************************************************************************
      * METHOD 2: Dijkstra's algorithm
      **************************************************************************/
@@ -58,8 +57,8 @@ int main(int argc, char **argv) {
     start_time = clock();
     dijkstra(distances_dijkstra, parent_dijkstra, G_naive, 0, num_nodes);
     time_elapsed = (double)(clock() - start_time) / CLOCKS_PER_SEC;
-    // pretty_print_array(distances_dijkstra, num_nodes, "distances Dijkstra");
-    // pretty_print_array(parent_dijkstra, num_nodes, "parent Dijkstra");
+    pretty_print_array(distances_dijkstra, num_nodes, "distances Dijkstra");
+    pretty_print_array(parent_dijkstra, num_nodes, "parent Dijkstra");
     printf("Time elapsed Dijkstra: %f\n", time_elapsed);
 
     /***************************************************************************
@@ -80,8 +79,8 @@ int main(int argc, char **argv) {
     start_time = clock();
     bfs(level_bfs_naive, parent_bfs_naive, G_naive, 0, num_nodes);
     time_elapsed = (double)(clock() - start_time) / CLOCKS_PER_SEC;
-    // pretty_print_array(level_bfs_naive, num_nodes, "level naive BFS");
-    // pretty_print_array(parent_bfs_naive, num_nodes, "parent naive BFS");
+    pretty_print_array(level_bfs_naive, num_nodes, "level naive BFS");
+    pretty_print_array(parent_bfs_naive, num_nodes, "parent naive BFS");
     printf("Time elapsed naive BFS: %f\n", time_elapsed);
 
     /***************************************************************************
@@ -92,8 +91,8 @@ int main(int argc, char **argv) {
     start_time = clock();
     LAGr_BreadthFirstSearch(&level_bfs_gb, &parent_bfs_gb, G, 0, msg);
     time_elapsed = (double)(clock() - start_time) / CLOCKS_PER_SEC;
-    // pretty_print_vector<int>(level_bfs_gb, "level LAGraph");
-    // pretty_print_vector<int>(parent_bfs_gb, "parent LAGraph");
+    pretty_print_vector<int>(level_bfs_gb, "level LAGraph");
+    pretty_print_vector<int>(parent_bfs_gb, "parent LAGraph");
     printf("Time elapsed LAGraph BFS: %f\n", time_elapsed);
 
     // Cleanup

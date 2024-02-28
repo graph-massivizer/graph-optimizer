@@ -3,25 +3,30 @@ LIBDIR      = /usr/local/lib
 
 include make.def
 
-SOURCES		= main.c
-
-OBJECTS		= $(SOURCES:.c=.o)
-TARGETS		= $(SOURCES:.c=)
+SOURCES		= ../bgo/*.cpp main.cpp
+OBJECTS	=	$(SOURCES:.cpp=.o)
+TARGETS	=	main
 
 all		: $(TARGETS)
 
-%.s 		: %.c $(HEADERS)
-		$(CC) -S $(CCFLAGS) $<
+../bgo/%.o	: ../bgo/%.cpp $(HEADERS)
+		$(CXX) $(CXXFLAGS) -c $< -o $@
 
-%.o  		: %.c $(HEADERS)
-		$(CC) -c $(CCFLAGS) $<
+%.s 		: %.cpp $(HEADERS)
+		$(CXX) -S $(CXXFLAGS) $<
+
+%.o  		: %.cpp $(HEADERS)
+		$(CXX) -c $(CXXFLAGS) $<
 
 %  		: %.o
-		$(CC) $^ -o $@ $(LIB)
+		$(CXX) $^ -o $@ $(LIB)
+
+main: main.o ../bgo/find_max.o ../bgo/find_path.o
+	$(CXX) $^ -o $@ $(LIB)
 
 clean		:
 		/bin/rm -rf a.out $(TARGETS) $(OBJECTS) *~
 
 .SECONDARY	: $(OBJECTS)
 
--include $(SOURCES:%.c=%.d)
+-include $(SOURCES:%.cpp=%.d)

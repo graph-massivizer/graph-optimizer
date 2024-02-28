@@ -6,6 +6,7 @@
 #include "../bgo/betweenness_centrality.hpp"
 #include "../bgo/find_max.hpp"
 #include "../include/utils.hpp"
+#include "../bgo/find_path.hpp"
 
 bool PARALLEL_EXECUTION = false;
 char msg[LAGRAPH_MSG_LEN] ;
@@ -86,11 +87,26 @@ int main(int argc, char **argv)
      * BGO 3: Find maximum betweenness centrality
      **************************************************************************/
     int max_bc_index = find_max(bc);
+    printf("Max BC index: %d\n", max_bc_index);
 
     /***************************************************************************
-     * BGO 4: Find shortest path from root to node with maximum betweenness
+     * BGO 4: BFS with max BC node as source
      **************************************************************************/
-    
+    GrB_Vector level_bfs_gb;
+    GrB_Vector parent_bfs_gb;
+    LAGr_BreadthFirstSearch(&level_bfs_gb, &parent_bfs_gb, G, max_bc_index, msg);
+
+    /***************************************************************************
+     * BGO 5: Find path from root to max BC node
+     **************************************************************************/
+    std::vector<int> path = find_path(parent_bfs_gb, 0, max_bc_index);
+
+    /* Print path from root node to the most popular node.*/
+    std::cout << "Path from 0 to max BC index: ";
+    for (uint i = 0; i < path.size() - 1; i++) {
+        std::cout << path[i] << " -> ";
+    }
+    std::cout << path[path.size() - 1] << std::endl;
 
     // Cleanup
     GrB_Matrix_free(&A);

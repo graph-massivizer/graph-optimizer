@@ -9,10 +9,8 @@
 #include "../include/bwc_dijkstra.hpp"
 #include "betweenness_centrality.hpp"
 
-using namespace std;
-
 /* Source: "A Faster Algorithm for Betweenness Centrality", Brandes, 2001 */
-int BC_brandes(float *bc, vector<int> *G, int *sources, int num_sources, int num_verts) {
+int BC_brandes(float *bc, std::vector<int> *G, int *sources, int num_sources, int num_verts) {
   /* Initialize the BC vector with all zeros. */
   for (int i = 0; i < num_verts; i++) {
     bc[i] = 0.0;
@@ -20,11 +18,11 @@ int BC_brandes(float *bc, vector<int> *G, int *sources, int num_sources, int num
 
   for (int i = 0; i < num_sources; i++) {
     int s = sources[i];
-    stack<int> S;
-    vector<vector<int>> P(num_verts);
-    vector<int> sigma(num_verts, 0);
-    vector<int> d(num_verts, -1);
-    queue<int> Q;
+    std::stack<int> S;
+    std::vector<vector<int>> P(num_verts);
+    std::vector<int> sigma(num_verts, 0);
+    std::vector<int> d(num_verts, -1);
+    std::queue<int> Q;
 
     sigma[s] = 1;
     d[s] = 0;
@@ -50,7 +48,7 @@ int BC_brandes(float *bc, vector<int> *G, int *sources, int num_sources, int num
       }
     }
 
-    vector<double> delta(num_verts, 0.0);
+    std::vector<double> delta(num_verts, 0.0);
     while (!S.empty()) {
       int w = S.top();
       S.pop();
@@ -66,7 +64,7 @@ int BC_brandes(float *bc, vector<int> *G, int *sources, int num_sources, int num
   return 0;
 }
 
-int BC_naive(float *bc, vector<int> *G, int *sources, int num_sources, int num_verts) {
+int BC_naive(float *bc, std::vector<int> *G, int *sources, int num_sources, int num_verts) {
   /* Initialize the BC vector with all zeros. */
   for (int i = 0; i < num_verts; i++) {
     bc[i] = 0.0;

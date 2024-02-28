@@ -5,8 +5,6 @@
 #include <vector>
 #include <climits>
 
-using namespace std;
-
 typedef struct{
     int node;
     int key;
@@ -17,8 +15,8 @@ class BinaryHeap{
     private:
 
         int size = 0;
-        vector<bnode> heap;
-        vector<int> pos; // Will be used for decrase_key
+        std::vector<bnode> heap;
+        std::vector<int> pos; // Will be used for decrase_key
 
     public:
 
@@ -130,17 +128,17 @@ class BinaryHeap{
         void print(){
             int size = heap.size();
             for(int i=0; i<size; i++){
-                cout << heap[i].node << ":" << heap[i].key << " ";
+                std::cout << heap[i].node << ":" << heap[i].key << " ";
             }
-            cout << endl;
+            std::cout << std::endl;
         }
 
         // Prints the positions of nodes in the heap
         // a:b means node a is at index b in the heap
         void print_pos(){
             for(uint i=0; i<pos.size(); i++){
-                cout << i << ":" << pos[i] << " ";
+                std::cout << i << ":" << pos[i] << " ";
             }
-            cout << endl;
+            std::cout << std::endl;
         }
 };
