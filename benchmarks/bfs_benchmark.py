@@ -6,17 +6,17 @@ def predicted_time(n):
 
 with open("bfs_benchmark.csv", "w") as csv_file:
     csv_file.write("dataset,nodes,edges,measured_time,predicted_time\n")
-    for filename in os.listdir("../data/bfs_test"):
-        if filename.endswith("_largest_cc.mtx"):
+    for filename in os.listdir("../data/bfs_test/star_graphs/"):
+        if filename.endswith(".mtx"):
             print("Running sssp_benchmark with input file: " + filename)
-            with open("../data/bfs_test/" + filename) as f:
+            with open("../data/bfs_test/star_graphs/" + filename) as f:
                 lines = f.readlines()
                 num_nodes = int(lines[1].split()[0])
                 num_edges = int(lines[1].split()[2])
 
             execution_times = []
             for i in range(10):
-                output = subprocess.check_output(["./sssp_benchmark", "../data/bfs_test/" + filename])
+                output = subprocess.check_output(["./sssp_benchmark", "../data/bfs_test/star_graphs/" + filename])
                 executon_time = float(output.decode("utf-8").split(':')[1].strip())
                 print(f"Execution time run {i}:", executon_time, "seconds")
                 execution_times.append(float(output.decode("utf-8").split(':')[1].strip()))
