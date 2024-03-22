@@ -4,7 +4,7 @@ CXX	= UNKNOW_PLATFORM
 
 ifeq ($(PLATFORM),Linux)
 	CXX	= g++ -std=c++11 -fopenmp
-	OPTS	= -g
+	OPTS	= -g -O0
 	#OPTS	= -Ofast -march=native -DNDEBUG
 	#OPTS	= -g -fsanitize=address
 	WFLAGS	= -Wall

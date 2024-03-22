@@ -1,5 +1,5 @@
-INCDIR      = /usr/local/include
-LIBDIR      = /usr/local/lib
+INCDIR      = ../../include
+LIBDIR      = ../../lib
 
 include make.def
 

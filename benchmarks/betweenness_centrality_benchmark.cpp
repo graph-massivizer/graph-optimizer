@@ -1,5 +1,5 @@
 #include "GraphBLAS.h"
-#include "suitesparse/LAGraph.h"
+#include "LAGraph.h"
 #include "../include/utils.hpp"
 #include "../bgo/betweenness_centrality.hpp"
 #include "../bgo/find_max.hpp"

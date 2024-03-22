@@ -2,7 +2,7 @@
 #define UTILS_H
 
 #include "GraphBLAS.h"
-#include "suitesparse/LAGraph.h"
+#include "LAGraph.h"
 #include <vector>
 #include <iostream>
 
