@@ -1,10 +1,11 @@
 import subprocess
 import os
+import sys
 
 def predicted_time(n):
     return (171.429*n + 3.36897*n**2) / 1000000000
 
-with open("bfs_benchmark.csv", "w") as csv_file:
+with open(sys.argv[1], "w") as csv_file:
     csv_file.write("dataset,nodes,edges,measured_time,predicted_time\n")
     for filename in os.listdir("../data/bfs_test/star_graphs/"):
         if filename.endswith(".mtx"):
