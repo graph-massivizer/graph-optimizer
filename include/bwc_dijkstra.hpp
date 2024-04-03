@@ -9,7 +9,7 @@ using namespace std;
 
 struct vprop {
 	int dist;
-	long long num_paths;
+	int num_paths;
 };
 
 vprop *bwc_dijkstra(vector<int> *G, int source, int N) {

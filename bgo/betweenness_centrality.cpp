@@ -84,7 +84,7 @@ int BC_naive(float *bc, std::vector<int> *G, int *sources, int num_sources, int 
         dt = assp[t];
         for (int v = 0; v < num_verts; v++) {
           if (v != sources[s] && v != sources[t] && ds[v].dist + dt[v].dist == ds[sources[t]].dist && ds[sources[t]].num_paths > 0) {
-            bc[v] += (float)(ds[v].num_paths * dt[v].num_paths) / (float)ds[sources[t]].num_paths;
+            bc[v] += (ds[v].num_paths * dt[v].num_paths) / (float)ds[sources[t]].num_paths;
           }
         }
       }
