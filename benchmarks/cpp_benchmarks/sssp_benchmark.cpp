@@ -1,11 +1,11 @@
 #include "GraphBLAS.h"
 #include "LAGraph.h"
-#include "../include/utils.hpp"
-#include "../bgo/betweenness_centrality.hpp"
-#include "../bgo/find_max.hpp"
-#include "../bgo/delta_step.hpp"
-#include "../bgo/bfs.hpp"
-#include "../bgo/dijkstra.hpp"
+#include "../../include/utils.hpp"
+#include "../../bgo/betweenness_centrality.hpp"
+#include "../../bgo/find_max.hpp"
+#include "../../bgo/delta_step.hpp"
+#include "../../bgo/bfs.hpp"
+#include "../../bgo/dijkstra.hpp"
 #include <stdio.h>
 #include <ctime>
 

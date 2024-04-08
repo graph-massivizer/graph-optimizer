@@ -1,8 +1,8 @@
 #include "GraphBLAS.h"
 #include "LAGraph.h"
-#include "../include/utils.hpp"
-#include "../bgo/betweenness_centrality.hpp"
-#include "../bgo/find_max.hpp"
+#include "../../include/utils.hpp"
+#include "../../bgo/betweenness_centrality.hpp"
+#include "../../bgo/find_max.hpp"
 #include <stdio.h>
 #include <ctime>
 
@@ -32,12 +32,13 @@ int main(int argc, char **argv) {
     /*
      * Initialization of source nodes
      */
-    int n_sources = 100;
+    int n_sources = num_nodes;
     GrB_Index sources_GrB[n_sources];
     int sources[n_sources];
     for (int i = 0; i < n_sources; i++) {
         int random = rand();
         int temp = random % num_nodes;
+        temp = i;
         sources_GrB[i] = temp;
         sources[i] = temp;
     }
@@ -50,7 +51,7 @@ int main(int argc, char **argv) {
     BC_GB(&bc, A, sources_GrB, n_sources);
     time_elapsed = (double)(clock() - start_time) / CLOCKS_PER_SEC;
     printf("Time elapsed GraphBLAS: %f\n", time_elapsed);
-
+    pretty_print_vector<float>(bc, "BC GraphBLAS");
 
     /***************************************************************************
      * METHOD 2: LAGraph (also using GraphBLAS)
@@ -62,18 +63,18 @@ int main(int argc, char **argv) {
     LAGr_Betweenness(&bc, G, sources_GrB, n_sources, msg);
     time_elapsed = (double)(clock() - start_time) / CLOCKS_PER_SEC;
     printf("Time elapsed LAGraph: %f\n", time_elapsed);
+    pretty_print_vector<float>(bc, "BC LAgraph");
 
 
     /***************************************************************************
      * METHOD 3: Naive sequential
      **************************************************************************/
     float bc_naive[num_nodes];
-    GrB_Index nvals;
-    GrB_Matrix_nvals(&nvals, A);
     start_time = clock();
     BC_naive(bc_naive, G_naive, sources, n_sources, num_nodes);
     time_elapsed = (double)(clock() - start_time) / CLOCKS_PER_SEC;
     printf("Time elapsed naive: %f\n", time_elapsed);
+    pretty_print_array(bc_naive, num_nodes, "BC naive");
 
 
     /***************************************************************************
@@ -84,6 +85,7 @@ int main(int argc, char **argv) {
     BC_brandes(bc_brandes, G_naive, sources, n_sources, num_nodes);
     time_elapsed = (double)(clock() - start_time) / CLOCKS_PER_SEC;
     printf("Time elapsed Brandes: %f\n", time_elapsed);
+    pretty_print_array(bc_brandes, num_nodes, "BC brandes");
 
 
     // Cleanup

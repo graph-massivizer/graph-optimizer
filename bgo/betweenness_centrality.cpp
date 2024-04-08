@@ -72,7 +72,11 @@ int BC_naive(float *bc, std::vector<int> *G, int *sources, int num_sources, int 
 
   vprop *assp[num_sources];
   for (int i = 0; i < num_sources; i++) {
-    assp[i] = bwc_dijkstra(G, sources[i], num_verts);
+    assp[i] = (vprop*)malloc(sizeof(vprop) * num_verts);
+  }
+
+  for (int i = 0; i < num_sources; i++) {
+    bwc_dijkstra(G, sources[i], num_verts, assp[i]);
   }
 
   vprop *ds;
