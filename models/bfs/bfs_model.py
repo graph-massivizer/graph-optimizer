@@ -62,7 +62,7 @@ if __name__=="__main__":
 
     # Check if the correct number of arguments were given.
     if len(arguments) != symbolical_model_parameters:
-        exit_with_error("Wrong number of arguments. Script needs {symbolical_model_parameters}, but {len(arguments)} were given.")
+        exit_with_error(f"Wrong number of arguments. Script needs {symbolical_model_parameters}, but {len(arguments)} were given.")
 
     # Read the argumends from commandline, and check if they are of the right type.
     T_q_front = try_cast_float(arguments[0], "Expected a number for parameter 'T_q_front' on position 1")
