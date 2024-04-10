@@ -4,7 +4,7 @@
 #include <ctime>
 #include <vector>
 
-const int NUM_THREADS = 4;
+#define NUM_THREADS 16
 
 /*******************************************************************
  * Version 1: OpenMP with custom reduction
@@ -62,10 +62,11 @@ int find_max_omp_local_reduction(float *v, int n) {
     return max_index;
 }
 
+
 /*******************************************************************
- * Version 3: OpenMP with local reduction
+ * Version 3: Custom thread pool
  ******************************************************************/
-void thread_function(int start_i, int end_i, std::vector<float> const &v, float &max_value, int &max_index) {
+void thread_function(int start_i, int end_i, float *v, float &max_value, int &max_index) {
     for (int i = start_i; i < end_i; i++) {
         if (v[i] > max_value) {
             max_value = v[i];
@@ -74,21 +75,18 @@ void thread_function(int start_i, int end_i, std::vector<float> const &v, float 
     }
 }
 
-int find_max_threads(std::vector<float> v, int n) {
-    std::vector<float> max_indices(NUM_THREADS, -1);
-    std::vector<int> max_values(NUM_THREADS, -1);
+
+int find_max_threads(float *v, int n) {
+    std::vector<float> max_values(NUM_THREADS, -1);
+    std::vector<int> max_indices(NUM_THREADS, -1);
 
     std::vector<std::thread> threads;
 
-    int start_i;
-    int end_i;
-
     for (int i = 0; i < NUM_THREADS; i++) {
-        start_i = i * n / NUM_THREADS;
-        end_i = (i + 1) * n / NUM_THREADS;
+        int start_i = i * n / NUM_THREADS;
+        int end_i = (i + 1) * n / NUM_THREADS;
 
-        std::thread t(thread_function, start_i, end_i, std::ref(v), std::ref(max_values[i]), std::ref(max_indices[i]));
-        threads.push_back(std::move(t));
+        threads.emplace_back(thread_function, start_i, end_i, v, std::ref(max_values[i]), std::ref(max_indices[i]));
     }
 
     for (int i = 0; i < NUM_THREADS; i++) {
@@ -109,14 +107,41 @@ int find_max_threads(std::vector<float> v, int n) {
 
 
 int main() {
-    srand(time(0));
-    const int n = 1000000;
-    float v[n];
+    srand(42);
+    const int iterations = 1;
+    const int n = 5000000;
+    float *v = new float[n];
 
     for (int i = 0; i < n; i++) {
-        v[i] = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX/n));
+        v[i] = static_cast <float> (rand());
     }
 
-    double start_time, time_elapsed;
+    omp_set_num_threads(NUM_THREADS);
 
+    int result_custom_reduction, result_local_reduction, result_threads;
+
+    clock_t start_time;
+    double time_elapsed_custom_reduction = 0, time_elapsed_local_reduction = 0, time_elapsed_threads = 0;
+
+    for (int i = 0; i < iterations; i++) {
+        start_time = clock();
+        result_custom_reduction = find_max_omp_custom_reduction(v, n);
+        time_elapsed_custom_reduction += (double)(clock() - start_time) / CLOCKS_PER_SEC;
+
+        start_time = clock();
+        result_local_reduction = find_max_omp_local_reduction(v, n);
+        time_elapsed_local_reduction += (double)(clock() - start_time) / CLOCKS_PER_SEC;
+
+        start_time = clock();
+        result_threads = find_max_threads(v, n);
+        time_elapsed_threads += (double)(clock() - start_time) / CLOCKS_PER_SEC;
+    }
+
+    std::cout << "Time elapsed custom reduction: " << time_elapsed_custom_reduction << ". With result: " << result_custom_reduction << std::endl;
+    std::cout << "Time elapsed local reduction: " << time_elapsed_local_reduction << ". With result: " << result_local_reduction << std::endl;
+    std::cout << "Time elapsed threads: " << time_elapsed_threads << ". With result: " << result_threads << std::endl;
+
+    std::cout << "Result value: " << v[result_custom_reduction] << std::endl;
+
+    delete[] v;
 }

@@ -1,7 +1,7 @@
 #ifndef FIND_MAX_HPP
 #define FIND_MAX_HPP
 
-#include <GraphBLAS.h>
+#include "GraphBLAS.h"
 
 int find_max(GrB_Vector v);
 

@@ -1,1 +1,9 @@
-{"n": 20000}
+{
+    "n": 20000,
+    "m": 100000,
+    "average_degree": 10,
+    "directed": false,
+    "weighted": true,
+    "diameter": 3,
+    "clustering_coefficient": 0.6
+}
