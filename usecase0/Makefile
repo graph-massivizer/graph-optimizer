@@ -4,13 +4,17 @@ LIBDIR      = /usr/local/lib
 include make.def
 
 SOURCES		= ../bgo/*.cpp main.cpp
-OBJECTS	=	$(SOURCES:.cpp=.o)
+CUDASOURCES = ../bgo/*.cu
+OBJECTS	=	$(SOURCES:.cpp=.o) $(CUDASOURCES:.cu=.o)
 TARGETS	=	main
 
 all		: $(TARGETS)
 
 ../bgo/%.o	: ../bgo/%.cpp $(HEADERS)
 		$(CXX) $(CXXFLAGS) -c $< -o $@
+
+../bgo/%.o	: ../bgo/%.cu $(HEADERS)
+		nvcc $(INCLUDE) -c $< -o $@
 
 %.s 		: %.cpp $(HEADERS)
 		$(CXX) -S $(CXXFLAGS) $<
@@ -21,7 +25,7 @@ all		: $(TARGETS)
 %  		: %.o
 		$(CXX) $^ -o $@ $(LIB)
 
-main: main.o ../bgo/find_max.o ../bgo/find_path.o
+main: main.o ../bgo/find_max.o ../bgo/find_path.o ../bgo/bfs_gpu.o
 	$(CXX) $^ -o $@ $(LIB)
 
 clean		:

@@ -7,6 +7,7 @@
 #include "../bgo/find_max.hpp"
 #include "../include/utils.hpp"
 #include "../bgo/find_path.hpp"
+#include "../bgo/bfs_gpu.cuh"
 
 bool PARALLEL_EXECUTION = false;
 char msg[LAGRAPH_MSG_LEN] ;
@@ -24,12 +25,14 @@ int main(int argc, char **argv)
 
     LAGraph_Init(msg);
 
-    GrB_Matrix A;
+    GrB_Matrix A, B;
 
     read_graph_GB(&A, argv[1]);
 
     GrB_Index num_nodes;
     GrB_Matrix_nrows(&num_nodes, A);
+
+    GrB_Matrix_dup(&B, A);
 
     /***************************************************************************
      * BGO 1: filtering, using connected components
@@ -94,7 +97,9 @@ int main(int argc, char **argv)
      **************************************************************************/
     GrB_Vector level_bfs_gb;
     GrB_Vector parent_bfs_gb;
-    LAGr_BreadthFirstSearch(&level_bfs_gb, &parent_bfs_gb, G, max_bc_index, msg);
+    // LAGr_BreadthFirstSearch(&level_bfs_gb, &parent_bfs_gb, G, max_bc_index, msg);
+    breadthFirstSearchGPU(&level_bfs_gb, &parent_bfs_gb, B, num_nodes, max_bc_index);
+    
 
     /***************************************************************************
      * BGO 5: Find path from root to max BC node

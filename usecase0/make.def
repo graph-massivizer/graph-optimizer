@@ -10,7 +10,7 @@ ifeq ($(PLATFORM),Linux)
 	WFLAGS	= -Wall
 	DEFS	=
 	INCLUDE	= -I$(INCDIR)
-	LIB	= -llagraph -lgraphblas -lm -Wl,-rpath,$(LIBDIR) -L$(LIBDIR)
+	LIB	= -llagraph -lgraphblas -lm -Wl,-rpath,$(LIBDIR) -L$(LIBDIR) -L /usr/local/cuda/lib -lcuda -lcudart
 endif
 
 ifeq ($(PLATFORM),Darwin)
