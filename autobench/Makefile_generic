@@ -1,0 +1,19 @@
+INCDIR			= $(HOME)/.local/include
+
+CPP_COMPILER	= g++ -std=c++11
+CPP_FLAGS		= -O3 -march=native -Wall -Wextra -fPIC
+CPP_INCLUDES	= -I$(HOME)/.local/include -I../../../include
+
+
+TARGET			= $(notdir $(PWD)).o
+
+
+all: $(TARGET)
+
+%.o: %.cpp
+	$(CPP_COMPILER) $(CPP_FLAGS) -c $(CPP_INCLUDES) $< -o $@
+
+clean:
+	rm -f *.o
+
+.PHONY: all clean
