@@ -23,8 +23,8 @@ ARG_CODE = {
 }
 
 FREE_CODE = {
-    'GrB_Matrix': '',
-    'GrB_Matrix*': '',
+    'GrB_Matrix': 'GrB_Matrix_free(&arg_{i});',
+    'GrB_Matrix*': 'GrB_Matrix_free(&arg_{i});',
 }
 
 
