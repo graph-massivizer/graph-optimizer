@@ -59,6 +59,13 @@ void read_graph_GB(GrB_Matrix *M, char *fileName) {
         fclose(fd);
 }
 
+void read_graph_LA(LAGraph_Graph *G, char *filename) {
+    char msg[LAGRAPH_MSG_LEN];
+    GrB_Matrix M;
+    read_graph_GB(&M, filename);
+    LAGraph_New(G, &M, LAGraph_ADJACENCY_DIRECTED, msg);
+}
+
 /*
  * Read a graph into vector array G given a specified fileName.
  */

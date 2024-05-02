@@ -9,14 +9,14 @@
 #include "{{ header }}"
 
 
-char msg[LAGRAPH_MSG_LEN];
-
 int main(int argc, char **argv) {
+    char msg[LAGRAPH_MSG_LEN];
+
     {% for decl in decls %}
     {{ decl }}
     {% endfor %}
 
-    if (argc != {{ args|length + 1 }}) {
+    if (argc != {{ names|length + 1 }}) {
         return -1;
     }
 
@@ -29,8 +29,8 @@ int main(int argc, char **argv) {
     auto start = std::chrono::steady_clock::now();
 
     {{ method }} (
-        {% for arg in args %}
-        {{ arg }} {{ ", " if not loop.last }}
+        {% for name in names %}
+        {{ name }} {{ ", " if not loop.last }}
         {% endfor %}
     );
 
