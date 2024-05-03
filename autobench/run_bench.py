@@ -16,6 +16,11 @@ with open(cases_file, 'r') as f:
 
 for i, case in enumerate(cases):
     for path in Path(case['bgo_path']).glob('*/bench'):
-        print(f"Running case {i} ({path}):")
-        run([path] + [str(arg) for arg in case['args']])
+        args = [str(arg) for arg in case['args']]
+        print(f"Running case {i}\n"
+              f"    path: {path}\n"
+              f"    args: {', '.join(args)}")
+        proc = run([path] + args)
+        if proc.returncode != 0: 
+            print("An error occurred!")
         print()

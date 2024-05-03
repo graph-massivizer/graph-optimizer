@@ -11,6 +11,7 @@
 
 int main(int argc, char **argv) {
     char msg[LAGRAPH_MSG_LEN];
+    int status;
 
     {% for decl in decls %}
     {{ decl }}
@@ -28,7 +29,7 @@ int main(int argc, char **argv) {
 
     auto start = std::chrono::steady_clock::now();
 
-    {{ method }} (
+    status = {{ method }} (
         {% for name in names %}
         {{ name }} {{ ", " if not loop.last }}
         {% endfor %}
@@ -36,11 +37,12 @@ int main(int argc, char **argv) {
 
     auto end = std::chrono::steady_clock::now();
     auto runtime_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
-    std::cout << runtime_ns << std::endl;
+    std::cout << "Runtime: " << runtime_ns << " ns" << std::endl;
+    std::cout << "Status: " << status << std::endl;
 
     {% for free in frees %}
     {{ free }}
     {% endfor %}
 
-    return 0;
+    return status;
 }
