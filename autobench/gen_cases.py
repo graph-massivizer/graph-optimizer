@@ -63,7 +63,7 @@ def main(args):
 
     cases = []
     for bgo_config in bgo_configs:
-        for data_config in data_configs[:1]:
+        for data_config in data_configs:
             for _ in range(args.num):
                 cases.append({
                     'bgo_path': bgo_config['path'],
