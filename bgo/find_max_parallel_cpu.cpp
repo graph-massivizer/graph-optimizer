@@ -3,17 +3,16 @@
 #include <iostream>
 #include <ctime>
 #include <vector>
+#include "find_max_parallel_cpu.hpp"
 
-#define NUM_THREADS 16
-
-/*******************************************************************
- * Version 1: OpenMP with custom reduction
- ******************************************************************/
 struct MaxValue {
     float value;
     int index;
 };
 
+/*******************************************************************
+ * Version 1: OpenMP with custom reduction
+ ******************************************************************/
 MaxValue& max(MaxValue& a, MaxValue& b) {
     return a.value > b.value ? a : b;
 }
@@ -106,42 +105,42 @@ int find_max_threads(float *v, int n) {
 }
 
 
-int main() {
-    srand(42);
-    const int iterations = 1;
-    const int n = 5000000;
-    float *v = new float[n];
+// int main() {
+//     srand(42);
+//     const int iterations = 1;
+//     const int n = 5000000;
+//     float *v = new float[n];
 
-    for (int i = 0; i < n; i++) {
-        v[i] = static_cast <float> (rand());
-    }
+//     for (int i = 0; i < n; i++) {
+//         v[i] = static_cast <float> (rand());
+//     }
 
-    omp_set_num_threads(NUM_THREADS);
+//     omp_set_num_threads(NUM_THREADS);
 
-    int result_custom_reduction, result_local_reduction, result_threads;
+//     int result_custom_reduction, result_local_reduction, result_threads;
 
-    clock_t start_time;
-    double time_elapsed_custom_reduction = 0, time_elapsed_local_reduction = 0, time_elapsed_threads = 0;
+//     clock_t start_time;
+//     double time_elapsed_custom_reduction = 0, time_elapsed_local_reduction = 0, time_elapsed_threads = 0;
 
-    for (int i = 0; i < iterations; i++) {
-        start_time = clock();
-        result_custom_reduction = find_max_omp_custom_reduction(v, n);
-        time_elapsed_custom_reduction += (double)(clock() - start_time) / CLOCKS_PER_SEC;
+//     for (int i = 0; i < iterations; i++) {
+//         start_time = clock();
+//         result_custom_reduction = find_max_omp_custom_reduction(v, n);
+//         time_elapsed_custom_reduction += (double)(clock() - start_time) / CLOCKS_PER_SEC;
 
-        start_time = clock();
-        result_local_reduction = find_max_omp_local_reduction(v, n);
-        time_elapsed_local_reduction += (double)(clock() - start_time) / CLOCKS_PER_SEC;
+//         start_time = clock();
+//         result_local_reduction = find_max_omp_local_reduction(v, n);
+//         time_elapsed_local_reduction += (double)(clock() - start_time) / CLOCKS_PER_SEC;
 
-        start_time = clock();
-        result_threads = find_max_threads(v, n);
-        time_elapsed_threads += (double)(clock() - start_time) / CLOCKS_PER_SEC;
-    }
+//         start_time = clock();
+//         result_threads = find_max_threads(v, n);
+//         time_elapsed_threads += (double)(clock() - start_time) / CLOCKS_PER_SEC;
+//     }
 
-    std::cout << "Time elapsed custom reduction: " << time_elapsed_custom_reduction << ". With result: " << result_custom_reduction << std::endl;
-    std::cout << "Time elapsed local reduction: " << time_elapsed_local_reduction << ". With result: " << result_local_reduction << std::endl;
-    std::cout << "Time elapsed threads: " << time_elapsed_threads << ". With result: " << result_threads << std::endl;
+//     std::cout << "Time elapsed custom reduction: " << time_elapsed_custom_reduction << ". With result: " << result_custom_reduction << std::endl;
+//     std::cout << "Time elapsed local reduction: " << time_elapsed_local_reduction << ". With result: " << result_local_reduction << std::endl;
+//     std::cout << "Time elapsed threads: " << time_elapsed_threads << ". With result: " << result_threads << std::endl;
 
-    std::cout << "Result value: " << v[result_custom_reduction] << std::endl;
+//     std::cout << "Result value: " << v[result_custom_reduction] << std::endl;
 
-    delete[] v;
-}
+//     delete[] v;
+// }

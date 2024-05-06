@@ -6,9 +6,7 @@
 #include <thrust/device_vector.h>
 #include <thrust/host_vector.h>
 #include <string>
-
-#define BLOCKSIZE 256
-#define warpSize 32
+#include "find_max_gpu.cuh"
 
 struct MaxValue {
     float value;
@@ -129,17 +127,7 @@ void reduce_wrapper(T *g_idata, MaxValue *g_odata, unsigned int N, int NumBlocks
     }
 }
 
-
-int main()
-{
-    srand(42);
-    const int n = 5000000;
-    float *v = new float[n];
-
-    for (int i = 0; i < n; i++) {
-        v[i] = static_cast <float> (rand());
-    }
-
+int find_max_gpu(float *v, int n) {
     thrust::device_vector<float> d_vec(v, v+n);
 
     int NumThreads = (n < BLOCKSIZE) ? nextPow2(n) : BLOCKSIZE;
@@ -149,27 +137,60 @@ int main()
      * worth of shared memory so that we don't index shared memory out of bounds */
     int smemSize = (NumThreads <= 32) ? 2 * NumThreads * sizeof(MaxValue) : NumThreads * sizeof(MaxValue);
 
-    /* Creating events for timing */
-    float time;
-    cudaEvent_t start, stop;
-    cudaEventCreate(&start);
-    cudaEventCreate(&stop);
-
     thrust::device_vector<MaxValue> d_vec_block(NumBlocks);
 
-    cudaEventRecord(start, 0);
     reduce_wrapper(thrust::raw_pointer_cast(d_vec.data()), thrust::raw_pointer_cast(d_vec_block.data()), n, NumBlocks, NumThreads, smemSize);
-    cudaEventRecord(stop, 0);
-    cudaEventSynchronize(stop);
-    cudaEventElapsedTime(&time, start, stop);
-    printf("Elapsed time:  %3.3f ms \n", time);
 
     /* The last part of the reduction, which would be expensive to perform on the device, is executed on the host */
     thrust::host_vector<MaxValue> h_vec_block(d_vec_block);
     MaxValue max_val = {-1, -1};
     for (int i=0; i<NumBlocks; i++)
         max_val = max(max_val, h_vec_block[i]);
-    printf("Result: %i\n", max_val.index);
-    printf("Result value: %f\n", max_val.value);
-    delete[] v;
+
+    return max_val.index;
 }
+
+
+// int main()
+// {
+//     srand(42);
+//     const int n = 5000000;
+//     float *v = new float[n];
+
+//     for (int i = 0; i < n; i++) {
+//         v[i] = static_cast <float> (rand());
+//     }
+
+//     thrust::device_vector<float> d_vec(v, v+n);
+
+//     int NumThreads = (n < BLOCKSIZE) ? nextPow2(n) : BLOCKSIZE;
+//     int NumBlocks = (n + NumThreads - 1) / NumThreads;
+
+//     /* when there is only one warp per block, we need to allocate two warps
+//      * worth of shared memory so that we don't index shared memory out of bounds */
+//     int smemSize = (NumThreads <= 32) ? 2 * NumThreads * sizeof(MaxValue) : NumThreads * sizeof(MaxValue);
+
+//     /* Creating events for timing */
+//     float time;
+//     cudaEvent_t start, stop;
+//     cudaEventCreate(&start);
+//     cudaEventCreate(&stop);
+
+//     thrust::device_vector<MaxValue> d_vec_block(NumBlocks);
+
+//     cudaEventRecord(start, 0);
+//     reduce_wrapper(thrust::raw_pointer_cast(d_vec.data()), thrust::raw_pointer_cast(d_vec_block.data()), n, NumBlocks, NumThreads, smemSize);
+//     cudaEventRecord(stop, 0);
+//     cudaEventSynchronize(stop);
+//     cudaEventElapsedTime(&time, start, stop);
+//     printf("Elapsed time:  %3.3f ms \n", time);
+
+//     /* The last part of the reduction, which would be expensive to perform on the device, is executed on the host */
+//     thrust::host_vector<MaxValue> h_vec_block(d_vec_block);
+//     MaxValue max_val = {-1, -1};
+//     for (int i=0; i<NumBlocks; i++)
+//         max_val = max(max_val, h_vec_block[i]);
+//     printf("Result: %i\n", max_val.index);
+//     printf("Result value: %f\n", max_val.value);
+//     delete[] v;
+// }

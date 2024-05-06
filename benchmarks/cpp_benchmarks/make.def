@@ -1,6 +1,7 @@
 PLATFORM := $(shell uname -s)
 
 CXX	= UNKNOW_PLATFORM
+NVCC = nvcc -Xcompiler -fopenmp
 
 ifeq ($(PLATFORM),Linux)
 	CXX	= g++ -std=c++11 -fopenmp
@@ -23,3 +24,5 @@ ifeq ($(PLATFORM),Darwin)
 endif
 
 CXXFLAGS	= $(OPTS) $(WFLAGS) $(DEFS) $(INCLUDE)
+CUFLAGS		= --compiler-options "$(OPTS) $(WFLAGS) $(DEFS) $(INCLUDE)"
+CULIB		= -llagraph -lgraphblas -lm -Xcompiler \"-Wl,-rpath,$(LIBDIR)\" -L$(LIBDIR)

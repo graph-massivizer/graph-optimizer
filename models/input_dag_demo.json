@@ -1,0 +1,17 @@
+[
+    {
+        "id": 0,
+        "name": "BGO1",
+        "dependencies": []
+    },
+    {
+        "id": 1,
+        "name": "BGO2",
+        "dependencies": [0]
+    },
+    {
+        "id": 2,
+        "name": "BGO3",
+        "dependencies": [1]
+    }
+]

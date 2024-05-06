@@ -5,6 +5,9 @@
 #include "../../bgo/find_max.hpp"
 #include <stdio.h>
 #include <ctime>
+#include <fstream>
+
+#define REPEAT_10(x) x x x x x x x x x x
 
 char msg[LAGRAPH_MSG_LEN];
 clock_t start_time;
@@ -12,9 +15,10 @@ double time_elapsed;
 
 int main(int argc, char **argv) {
     srand(time(0));
-    if (argc < 2)
+
+    if (argc < 3)
     {
-        fprintf(stderr, "Error\nUsage: %s <matrix_market_file.mtx>\n", argv[0]);
+        fprintf(stderr, "Error\nUsage: %s <matrix_market_file.mtx>  <output_csv_folder> \n", argv[0]);
         return 1;
     }
 
@@ -32,26 +36,47 @@ int main(int argc, char **argv) {
     /*
      * Initialization of source nodes
      */
-    int n_sources = num_nodes;
+    int n_sources = 1000;
     GrB_Index sources_GrB[n_sources];
     int sources[n_sources];
     for (int i = 0; i < n_sources; i++) {
         int random = rand();
         int temp = random % num_nodes;
-        temp = i;
         sources_GrB[i] = temp;
         sources[i] = temp;
     }
 
+    int n_iterations = 5;
+
+    /*
+     * Initialize output csv files for all methods
+     */
+    std::ofstream output_csv_graphBLAS;
+    std::ofstream output_csv_LAGraph;
+    std::ofstream output_csv_naive;
+    std::ofstream output_csv_brandes;
+    output_csv_graphBLAS.open(argv[2] + std::string("_graphblas.csv"));
+    output_csv_LAGraph.open(argv[2] + std::string("_LAGraph.csv"));
+    output_csv_naive.open(argv[2] + std::string("_naive.csv"));
+    output_csv_brandes.open(argv[2] + std::string("_brandes.csv"));
+    output_csv_graphBLAS << "iteration,n_sources,time" << std::endl;
+    output_csv_LAGraph << "iteration,n_sources,time" << std::endl;
+    output_csv_naive << "iteration,n_sources,time" << std::endl;
+    output_csv_brandes << "iteration,n_sources,time" << std::endl;
+
+
     /***************************************************************************
      * METHOD 1: GraphBLAS
      **************************************************************************/
-    start_time = clock();
     GrB_Vector bc;
-    BC_GB(&bc, A, sources_GrB, n_sources);
-    time_elapsed = (double)(clock() - start_time) / CLOCKS_PER_SEC;
-    printf("Time elapsed GraphBLAS: %f\n", time_elapsed);
-    pretty_print_vector<float>(bc, "BC GraphBLAS");
+    for (int i = 0; i < n_iterations; i++) {
+        start_time = clock();
+        BC_GB(&bc, A, sources_GrB, n_sources);
+        time_elapsed = (double)(clock() - start_time) / CLOCKS_PER_SEC;
+        output_csv_graphBLAS << i << "," << n_sources << "," << time_elapsed << std::endl;
+        std::cout << "Time elapsed for iteration " << i << ": " << time_elapsed << std::endl;
+    }
+
 
     /***************************************************************************
      * METHOD 2: LAGraph (also using GraphBLAS)
@@ -59,34 +84,41 @@ int main(int argc, char **argv) {
     LAGraph_Graph G;
     LAGraph_New(&G, &A, LAGraph_ADJACENCY_UNDIRECTED, msg);
 
-    start_time = clock();
-    LAGr_Betweenness(&bc, G, sources_GrB, n_sources, msg);
-    time_elapsed = (double)(clock() - start_time) / CLOCKS_PER_SEC;
-    printf("Time elapsed LAGraph: %f\n", time_elapsed);
-    pretty_print_vector<float>(bc, "BC LAgraph");
+    for(int i = 0; i < n_iterations; i++) {
+        start_time = clock();
+        LAGr_Betweenness(&bc, G, sources_GrB, n_sources, msg);
+        time_elapsed = (double)(clock() - start_time) / CLOCKS_PER_SEC;
+        output_csv_LAGraph << i << "," << n_sources << "," << time_elapsed << std::endl;
+        std::cout << "Time elapsed for iteration " << i << ": " << time_elapsed << std::endl;
+    }
 
 
     /***************************************************************************
      * METHOD 3: Naive sequential
      **************************************************************************/
     float bc_naive[num_nodes];
-    start_time = clock();
-    BC_naive(bc_naive, G_naive, sources, n_sources, num_nodes);
-    time_elapsed = (double)(clock() - start_time) / CLOCKS_PER_SEC;
-    printf("Time elapsed naive: %f\n", time_elapsed);
-    pretty_print_array(bc_naive, num_nodes, "BC naive");
+
+    for (int i = 0; i < n_iterations; i++) {
+        start_time = clock();
+        BC_naive(bc_naive, G_naive, sources, n_sources, num_nodes);
+        time_elapsed = (double)(clock() - start_time) / CLOCKS_PER_SEC;
+        output_csv_naive << i << "," << n_sources << "," << time_elapsed << std::endl;
+        std::cout << "Time elapsed for iteration " << i << ": " << time_elapsed << std::endl;
+    }
 
 
     /***************************************************************************
      * METHOD 4: Brandes' algorithm
      **************************************************************************/
     float bc_brandes[num_nodes];
-    start_time = clock();
-    BC_brandes(bc_brandes, G_naive, sources, n_sources, num_nodes);
-    time_elapsed = (double)(clock() - start_time) / CLOCKS_PER_SEC;
-    printf("Time elapsed Brandes: %f\n", time_elapsed);
-    pretty_print_array(bc_brandes, num_nodes, "BC brandes");
 
+    for (int i = 0; i < n_iterations; i++) {
+        start_time = clock();
+        BC_brandes(bc_brandes, G_naive, sources, n_sources, num_nodes);
+        time_elapsed = (double)(clock() - start_time) / CLOCKS_PER_SEC;
+        output_csv_brandes << i << "," << n_sources << "," << time_elapsed << std::endl;
+        std::cout << "Time elapsed for iteration " << i << ": " << time_elapsed << std::endl;
+    }
 
     // Cleanup
     GrB_Matrix_free(&A);

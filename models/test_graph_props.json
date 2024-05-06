@@ -4,6 +4,7 @@
     "average_degree": 10,
     "directed": false,
     "weighted": true,
-    "diameter": 3,
-    "clustering_coefficient": 0.6
+    "diameter": 5000,
+    "clustering_coefficient": 0.6,
+    "triangle_count": 50000
 }

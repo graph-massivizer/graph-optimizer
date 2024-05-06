@@ -58,14 +58,14 @@ void breadthFirstSearchGPU(
 
     int nQueueSize = 1;
     int cLevel = 0;
-    
+
     bool *d_G;
     int *d_level;
     int *d_parent;
     int *d_cQueue;
     int *d_nQueue;
     int *d_cQueueSize;
-    int *d_nQueueSize;  
+    int *d_nQueueSize;
 
     /* Allocate memory on the device. */
     cudaMalloc((void **) &d_G, num_nodes * num_nodes * sizeof(bool));

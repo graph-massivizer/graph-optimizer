@@ -1,0 +1,53 @@
+[
+    {
+        "id": 0,
+        "name": "BGO1",
+        "dependencies": [],
+        "performances": [
+            {
+                "host": "H0",
+                "runtime": 10,
+                "energy": 160
+            },
+            {
+                "host": "H1",
+                "runtime": 20,
+                "energy": 60
+            }
+        ]
+    },
+    {
+        "id": 1,
+        "name": "BGO2",
+        "dependencies": [0],
+        "performances": [
+            {
+                "host": "H0",
+                "runtime": 2,
+                "energy": 20
+            },
+            {
+                "host": "H1",
+                "runtime": 4,
+                "energy": 10
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "name": "BGO3",
+        "dependencies": [1],
+        "performances": [
+            {
+                "host": "H0",
+                "runtime": 5,
+                "energy": 100
+            },
+            {
+                "host": "H1",
+                "runtime": 10,
+                "energy": 60
+            }
+        ]
+    }
+]
