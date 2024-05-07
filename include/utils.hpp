@@ -78,7 +78,7 @@ void pretty_print_vector(GrB_Vector v, int n, std::string name) {
     std::cout << "test3" << std::endl;
     T values[n];
     fflush(stdout);
-    GrB_Vector_extractTuples_FP32(indices, values, &N, v);
+    GrB_Vector_extractTuples_INT32(indices, values, &N, v);
     std::cout << name.c_str() << ": [";
     for (uint i = 0; i < n - 1; i++) {
         std::cout << std::to_string(values[i]) << ", ";
