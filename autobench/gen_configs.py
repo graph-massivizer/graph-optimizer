@@ -1,85 +1,105 @@
 #!/usr/bin/env python
 
 """
-Generates a data.json file and .json file for each BGO implementation.
+Generates the 'config.json' file.
 """
 
-
-import os
 import sys
 
+from os.path import abspath, basename, dirname, exists, expanduser, join, relpath
 from pathlib import Path
 import json
 
 from scipy.io import mminfo
 from clang.cindex import Index
 
-from config import INCLUDES, DATA_DIR, BGOS_DIR
+from config import *
 
 
-def genereate_data_config(data_dir):
-    data = []
-    for mtx_file in Path(data_dir).glob('**/*.mtx'):
+def update_data_config(config, base_dir, data_dir):
+    mtx_files = [str(path) for path in Path(data_dir).glob('**/*.mtx')]
+    
+    if 'data' not in config:
+        config['data'] = {}
+    
+    for mtx_file in mtx_files:
         with open(mtx_file, 'r') as f:
-            rows, cols, entries, form, field, symmetry = mminfo(f)
+            rows, cols, entries, _, _, _ = mminfo(f)
             if rows != cols:
-                print(f"{mtx_file} skipped, number of rows and columns does not match!", file=sys.stderr)
+                print(f"Error in '{mtx_file}', number of rows and columns does not match!", file=sys.stderr)
                 continue
             
-            data.append({
-                'id': str(mtx_file).split(f'{str(data_dir)}/')[1].split('.mtx')[0],
-                'path': str(mtx_file),
-                'size_verts': rows,
-                'size_edges': entries,
-            })
-    
-    with open(os.path.join(data_dir, 'data.json'), 'w') as f:
-        json.dump(data, f, indent=4)
+            name = relpath(mtx_file, base_dir)
+            if name not in config['data']:
+                config['data'][name] = {}
+            
+            config['data'][name]['size_verts'] = rows
+            config['data'][name]['size_edges'] = entries
 
 
-def read_header(header_file):
-    signatures = []
-    
-    def traverse_ast(node):
-        if str(node.location.file) == str(header_file) and node.kind.name == 'FUNCTION_DECL':
-            signatures.append({
-                'name': node.spelling,
-                'return': node.result_type.spelling.replace(' ', ''),
-                'args': [arg.type.spelling.replace(' ', '') for arg in node.get_arguments()]
-            })
+def update_imp_bgo_config(config, base_dir, bgos_dir):
+    def read_header(header_file):
+        signatures = []
         
-        for child in node.get_children():
-            traverse_ast(child)
+        def traverse_ast(node):
+            if str(node.location.file) == str(header_file) and node.kind.name == 'FUNCTION_DECL':
+                signatures.append({
+                    'name': node.spelling,
+                    'return': node.result_type.spelling.replace(' ', ''),
+                    'args': [arg.type.spelling.replace(' ', '') for arg in node.get_arguments()]
+                })
+            
+            for child in node.get_children():
+                traverse_ast(child)
 
-    index = Index.create()
-    root = index.parse(header_file, args=[f'-I{os.path.abspath(os.path.expanduser(include))}' for include in INCLUDES]).cursor
-    traverse_ast(root)
-    return signatures
+        index = Index.create()
+        root = index.parse(header_file, args=[f'-I{include}' for include in INCLUDES]).cursor
+        traverse_ast(root)
+        return signatures
 
+    header_files = [str(path) for path in Path(bgos_dir).glob('*/*/*.hpp')]
+    
+    if 'bgos' not in config:
+        config['bgos'] = {}
 
-def generate_bgos_config(bgos_dir):
-    for header_file in Path(bgos_dir).glob('*/*/*.hpp'):
-        if os.path.basename(header_file).split('.')[0] != os.path.basename(os.path.dirname(header_file)):
+    for header_file in header_files:
+        if basename(header_file).split('.')[0] != basename(dirname(header_file)):
             continue
-
+        
+        abs_bgo_name = relpath(header_file, bgos_dir).split('/')[0]
+        if abs_bgo_name not in config['bgos']:
+            config['bgos'][abs_bgo_name] = {}
+        
         signatures = read_header(header_file)
-        if len(signatures) != 1:
-            print(f"{header_file} skipped, number of function definitions is not equal to one!")
-            continue
         
-        config_file = os.path.join(os.path.dirname(header_file), 'config.json')
-        with open(config_file, 'w') as f:
-            json.dump(signatures[0], f, indent=4)
-
-def main():
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    
-    data_dir = os.path.abspath(os.path.join(current_dir, DATA_DIR))
-    genereate_data_config(data_dir)
-    
-    bgos_dir = os.path.abspath(os.path.join(current_dir, BGOS_DIR))
-    generate_bgos_config(bgos_dir)
+        for signature in signatures:
+            imp_bgo_name = signature['name']
+            if imp_bgo_name not in config['bgos'][abs_bgo_name]:
+                config['bgos'][abs_bgo_name][imp_bgo_name] = {}
+            config['bgos'][abs_bgo_name][imp_bgo_name]['args'] = signature['args']
 
 
 if __name__ == '__main__':
-    main()
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Populate config files with available data.")
+    parser.add_argument('--parts', nargs='+', choices=['all', 'data', 'abs_bgo', 'imp_bgo'], default=['all'])
+    args = parser.parse_args()
+
+    if 'all' in args.parts and len(args.parts) > 1:
+        parser.error('The \'all\' option cannot be combined with other options.')
+
+    config = {}
+    if exists(CONFIG_FILE):
+        with open(CONFIG_FILE, 'r') as f:
+            config = json.load(f)
+
+    if 'all' in args.parts or 'data' in args.parts:
+        update_data_config(config, BASE_DIR, DATA_DIR)
+    if 'all' in args.parts or 'abs_bgo' in args.parts:
+        pass
+    if 'all' in args.parts or 'imp_bgo' in args.parts:
+        update_imp_bgo_config(config, BASE_DIR, BGOS_DIR)
+
+    with open(CONFIG_FILE, 'w') as f:
+        json.dump(config, f, indent=4)
