@@ -37,6 +37,21 @@ def update_data_config(config, base_dir, data_dir):
             config['data'][name]['size_edges'] = entries
 
 
+def update_abs_bgo_config(config, base_dir, bgos_dir):
+    config_files = [str(path) for path in Path(bgos_dir).glob('*/config.json')]
+
+    if 'bgos' not in config:
+        config['bgos'] = {}
+    
+    for config_file in config_files:
+        abs_bgo_name = basename(dirname(config_file))
+        if abs_bgo_name not in config['bgos']:
+            config['bgos'][abs_bgo_name] = {}
+        with open(config_file, 'r') as f:
+            bgo = json.load(f)
+            config['bgos'][abs_bgo_name] = {**config['bgos'][abs_bgo_name], **bgo}
+
+
 def update_imp_bgo_config(config, base_dir, bgos_dir):
     def read_header(header_file):
         signatures = []
@@ -69,14 +84,18 @@ def update_imp_bgo_config(config, base_dir, bgos_dir):
         abs_bgo_name = relpath(header_file, bgos_dir).split('/')[0]
         if abs_bgo_name not in config['bgos']:
             config['bgos'][abs_bgo_name] = {}
+        if 'implementations' not in config['bgos'][abs_bgo_name]:
+            config['bgos'][abs_bgo_name]['implementations'] = {}
         
         signatures = read_header(header_file)
         
         for signature in signatures:
             imp_bgo_name = signature['name']
-            if imp_bgo_name not in config['bgos'][abs_bgo_name]:
-                config['bgos'][abs_bgo_name][imp_bgo_name] = {}
-            config['bgos'][abs_bgo_name][imp_bgo_name]['args'] = signature['args']
+            if imp_bgo_name not in config['bgos'][abs_bgo_name]['implementations']:
+                config['bgos'][abs_bgo_name]['implementations'][imp_bgo_name] = {}
+            config['bgos'][abs_bgo_name]['implementations'][imp_bgo_name]['path'] = dirname(header_file)
+            config['bgos'][abs_bgo_name]['implementations'][imp_bgo_name]['args'] = signature['args']
+            config['bgos'][abs_bgo_name]['implementations'][imp_bgo_name]['header'] = header_file
 
 
 if __name__ == '__main__':
@@ -97,7 +116,7 @@ if __name__ == '__main__':
     if 'all' in args.parts or 'data' in args.parts:
         update_data_config(config, BASE_DIR, DATA_DIR)
     if 'all' in args.parts or 'abs_bgo' in args.parts:
-        pass
+        update_abs_bgo_config(config, BASE_DIR, BGOS_DIR)
     if 'all' in args.parts or 'imp_bgo' in args.parts:
         update_imp_bgo_config(config, BASE_DIR, BGOS_DIR)
 
