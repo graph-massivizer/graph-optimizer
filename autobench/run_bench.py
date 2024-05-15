@@ -8,6 +8,7 @@ from subprocess import run
 
 import json
 import random
+import time
 
 from scipy.io import mmwrite
 
@@ -103,20 +104,20 @@ if __name__ == '__main__':
         for data in args.data:
             data = {**config['data'][data], 'path': data}
             for _ in range(args.num):
-                args = generate_case(abs_bgo, data)
-                for i, arg in enumerate(args):
+                bgo_args = generate_case(abs_bgo, data)
+                for i, arg in enumerate(bgo_args):
                     if type(arg) is list:
                         path = join(TEMP_DIR, f'arg{i}.mtx')
                         mmwrite(path, [arg])
-                        args[i] = path
-                print(args)
+                        bgo_args[i] = path
+                print(bgo_args)
                 
-                args = [str(arg) for arg in args]
+                bgo_args = [str(arg) for arg in bgo_args]
                 path = join(bgos[bgo]['path'], 'bench')
                 print(f"Running case\n"
                     f"    path: {path}\n"
-                    f"    args: {', '.join(args)}")
-                proc = run([path] + args)
+                    f"    args: {', '.join(bgo_args)}")
+                proc = run([path] + bgo_args)
                 if proc.returncode != 0:
                     print("An error occurred!")
                 print()
