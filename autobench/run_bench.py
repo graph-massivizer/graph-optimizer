@@ -1,14 +1,17 @@
 #!/usr/bin/env python
 
+import os
 import sys
 
 from os.path import abspath, basename, dirname, exists, join
 from pathlib import Path
-from subprocess import run
+from subprocess import run, PIPE
 
 import json
 import random
 import time
+
+from csv import DictWriter
 
 from scipy.io import mmwrite
 
@@ -99,7 +102,8 @@ if __name__ == '__main__':
 
         abs_bgo = config['bgos'][bgos[bgo]['abs_bgo']]
 
-        print(bgos[bgo])
+        path = join(bgos[bgo]['path'], 'bench')
+        results_file = abspath(join(bgos[bgo]['path'], '../results.csv'))
 
         for data in args.data:
             data = {**config['data'][data], 'path': data}
@@ -107,17 +111,31 @@ if __name__ == '__main__':
                 bgo_args = generate_case(abs_bgo, data)
                 for i, arg in enumerate(bgo_args):
                     if type(arg) is list:
-                        path = join(TEMP_DIR, f'arg{i}.mtx')
-                        mmwrite(path, [arg])
-                        bgo_args[i] = path
-                print(bgo_args)
+                        list_path = join(TEMP_DIR, f'arg{i}.mtx')
+                        mmwrite(list_path, [arg])
+                        bgo_args[i] = list_path
                 
                 bgo_args = [str(arg) for arg in bgo_args]
-                path = join(bgos[bgo]['path'], 'bench')
                 print(f"Running case\n"
                     f"    path: {path}\n"
                     f"    args: {', '.join(bgo_args)}")
-                proc = run([path] + bgo_args)
+                proc = run([path] + bgo_args, stdout=PIPE)
                 if proc.returncode != 0:
                     print("An error occurred!")
                 print()
+                
+                runtime, status = RESULT_PATTERN.findall(proc.stdout.decode('utf-8'))[0]
+
+                result = {
+                    'timestamp': time.strftime('%Y-%m-%d %H:%M:%S %Z', time.gmtime(time.time())),
+                    'bgo_path': dirname(path),
+                    'runtime_ns': runtime,
+                    'status': status,
+                    **{f'arg_{i}': arg for i, arg in enumerate(bgo_args)}
+                }
+
+                with open(results_file, 'a') as f:
+                    writer = DictWriter(f, result.keys())
+                    if os.path.getsize(results_file) == 0:
+                        writer.writeheader()
+                    writer.writerow(result)

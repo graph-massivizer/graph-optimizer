@@ -1,5 +1,5 @@
 from os.path import abspath, dirname, expanduser, join
-
+import re
 from jinja2 import Environment, FileSystemLoader
 
 BASE_DIR = abspath(join(dirname(__file__), '../'))
@@ -15,6 +15,8 @@ INCLUDES = [
 ]
 
 TEMPLATE = Environment(loader=FileSystemLoader(BASE_DIR)).get_template('autobench/main_template.cpp')
+
+RESULT_PATTERN = re.compile(r'Runtime: (\d+) ns\nStatus: (\d+)')
 
 TRANSLATIONS = {
     'GrB_Matrix': {
