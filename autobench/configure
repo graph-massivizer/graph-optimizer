@@ -13,7 +13,7 @@ import json
 from scipy.io import mminfo
 from clang.cindex import Index
 
-from config import *
+from util.config import *
 
 
 def update_data_config(config, base_dir, data_dir):

@@ -15,7 +15,7 @@ from csv import DictWriter
 
 from scipy.io import mmwrite
 
-from config import *
+from util.config import *
 
 
 def RAND_VERT_VECTOR(size_verts):

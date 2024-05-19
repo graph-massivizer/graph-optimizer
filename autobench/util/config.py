@@ -2,10 +2,10 @@ from os.path import abspath, dirname, expanduser, join
 import re
 from jinja2 import Environment, FileSystemLoader
 
-BASE_DIR = abspath(join(dirname(__file__), '../'))
+BASE_DIR = abspath(join(dirname(__file__), '../../'))
 DATA_DIR = join(BASE_DIR, 'data')
 BGOS_DIR = join(BASE_DIR, 'bgo')
-TEMP_DIR = join(BASE_DIR, 'autobench/cases')
+TEMP_DIR = join(BASE_DIR, '/tmp')
 
 CONFIG_FILE = join(BASE_DIR, 'config.json')
 
@@ -14,7 +14,7 @@ INCLUDES = [
     expanduser('~/graph-optimizer/include'),
 ]
 
-TEMPLATE = Environment(loader=FileSystemLoader(BASE_DIR)).get_template('autobench/main_template.cpp')
+TEMPLATE = Environment(loader=FileSystemLoader(BASE_DIR)).get_template('autobench/misc/template.cpp')
 
 RESULT_PATTERN = re.compile(r'Runtime: (\d+) ns\nStatus: (\d+)')
 

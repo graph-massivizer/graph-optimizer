@@ -1,1 +1,1 @@
-../../../autobench/Makefile_generic
+../../../autobench/misc/Makefile_generic
