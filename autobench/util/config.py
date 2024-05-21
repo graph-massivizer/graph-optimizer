@@ -29,6 +29,20 @@ TRANSLATIONS = {
         'init': 'read_graph_LA(&arg_{i}, argv[{i}]);',
         'name': 'arg_{i}',
     },
+    'CMatrix<int>': {
+        'decl': 'CMatrix<int> arg_{i};',
+        'init': 'read_graph_CMatrix(&arg_{i}, argv[{i}]);',
+        'name': 'arg_{i}',
+    },
+    'CArray<int>': {
+        'decl': 'CArray<int> arg_{i};',
+        'init': 'read_vector_CArray(&arg_{i}, argv[{i}]);',
+        'name': 'arg_{i}',
+    },
+    'CArray<int>*': {
+        'decl': 'CArray<int> arg_{i} = CArray<int>(atoi(argv[{i}]));',
+        'name': '&arg_{i}',
+    },
     'CArray<GrB_Index>': {
         'decl': 'CArray<GrB_Index> arg_{i} = CArray<GrB_Index>(atoi(argv[{i}]));',
         'name': 'arg_{i}',
