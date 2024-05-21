@@ -10,6 +10,7 @@ from subprocess import run, PIPE
 import json
 import random
 import time
+from datetime import datetime
 
 from csv import DictWriter
 
@@ -69,6 +70,8 @@ def generate_case(abs_bgo, data):
 if __name__ == '__main__':
     import argparse
 
+    timestamp = (datetime.utcnow() - datetime(1970, 1, 1)).total_seconds()
+
     if not exists(CONFIG_FILE):
         print(f"Config file does not exist! ({CONFIG_FILE})", file=sys.stderr)
         exit(-1)
@@ -103,7 +106,7 @@ if __name__ == '__main__':
         abs_bgo = config['bgos'][bgos[bgo]['abs_bgo']]
 
         path = join(bgos[bgo]['path'], 'bench')
-        results_file = abspath(join(bgos[bgo]['path'], '../results.csv'))
+        results_file = abspath(join(bgos[bgo]['path'], f'../results_{timestamp}.csv'))
 
         for data in args.data:
             data = {**config['data'][data], 'path': data}
