@@ -6,6 +6,6 @@
 
 #include "datastructures.hpp"
 
-int betweenness_centrality_LAGr(LAGraph_Graph G, CArray<GrB_Index> sources, GrB_Vector *centrality);
+int bc_lagr(LAGraph_Graph G, CArray<GrB_Index> sources, GrB_Vector *centrality);
 
 #endif

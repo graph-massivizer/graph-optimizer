@@ -19,6 +19,11 @@ TEMPLATE = Environment(loader=FileSystemLoader(BASE_DIR)).get_template('autobenc
 RESULT_PATTERN = re.compile(r'Runtime: (\d+) ns\nStatus: (\d+)')
 
 TRANSLATIONS = {
+    'CMatrix<int>': {
+        'decl': 'CMatrix<int> arg_{i};',
+        'init': 'read_graph_CMatrix(&arg_{i}, argv[{i}]);',
+        'name': 'arg_{i}',
+    },
     'GrB_Matrix': {
         'decl': 'GrB_Matrix arg_{i};',
         'init': 'read_graph_GB(&arg_{i}, argv[{i}]);',
@@ -29,26 +34,46 @@ TRANSLATIONS = {
         'init': 'read_graph_LA(&arg_{i}, argv[{i}]);',
         'name': 'arg_{i}',
     },
-    'CMatrix<int>': {
+
+    'CMatrix<int>*': {
         'decl': 'CMatrix<int> arg_{i};',
-        'init': 'read_graph_CMatrix(&arg_{i}, argv[{i}]);',
-        'name': 'arg_{i}',
+        'name': '&arg_{i}',
     },
+    'GrB_Matrix*': {
+        'decl': 'GrB_Matrix arg_{i};',
+        'name': '&arg_{i}',
+    },
+    'LAGraph_Graph*': {
+        'decl': 'LAGraph_Graph arg_{i};',
+        'name': '&arg_{i}',
+    },
+
     'CArray<int>': {
         'decl': 'CArray<int> arg_{i};',
         'init': 'read_vector_CArray(&arg_{i}, argv[{i}]);',
         'name': 'arg_{i}',
     },
+    'CArray<GrB_Index>': {
+        'decl': 'CArray<GrB_Index> arg_{i};',
+        'init': 'read_vector_CArray(&arg_{i}, argv[{i}]);',
+        'name': 'arg_{i}',
+    },
+    'GrB_Vector': {
+        'decl': 'GrB_Vector arg_{i};',
+        'init': 'read_vector_GB(&arg_{i}, argv[{i}]);',
+        'name': 'arg_{i}',
+    },
+
     'CArray<int>*': {
-        'decl': 'CArray<int> arg_{i} = CArray<int>(atoi(argv[{i}]));',
+        'decl': 'CArray<int> arg_{i};',
         'name': '&arg_{i}',
     },
-    'CArray<GrB_Index>': {
-        'decl': 'CArray<GrB_Index> arg_{i} = CArray<GrB_Index>(atoi(argv[{i}]));',
-        'name': 'arg_{i}',
+    'CArray<GrB_Index>*': {
+        'decl': 'CArray<GrB_Index> arg_{i};',
+        'name': '&arg_{i}',
     },
     'GrB_Vector*': {
         'decl': 'GrB_Vector arg_{i};',
         'name': '&arg_{i}',
-    }
+    },
 }

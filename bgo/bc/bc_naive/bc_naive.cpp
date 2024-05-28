@@ -50,9 +50,11 @@ void bwc_dijkstra(CMatrix<int> G, int source, vprop *props) {
 int bc_naive(CMatrix<int> G, CArray<int> sources, CArray<int> *centrality) {
     const int num_verts = G.size_m;
     const int num_sources = sources.size;
+
+    centrality->init(num_verts);
     
     /* Initialize the BC vector with all zeros. */
-    for (int i = 0; i < centrality->size; i++) {
+    for (size_t i = 0; i < centrality->size; i++) {
         centrality[i] = 0;
     }
 

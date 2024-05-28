@@ -9,6 +9,8 @@ int bc_brandes(CMatrix<int> G, CArray<int> sources, CArray<int> *centrality) {
     const int num_verts = G.size_m;
     const int num_sources = sources.size;
 
+    centrality->init(num_verts);
+
     /* Initialize the centrality vector with all zeros. */
     for (int i = 0; i < num_verts; i++) {
         centrality->data[i] = 0;
