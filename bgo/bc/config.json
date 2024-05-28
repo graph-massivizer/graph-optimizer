@@ -1,5 +1,5 @@
 {
-    "args": [
+    "in_args": [
         {
             "id": "G",
             "kind": "GRAPH"
@@ -8,11 +8,12 @@
             "id": "sources",
             "kind": "VECTOR",
             "value": "G.RAND_VERT_VECTOR"
-        },
+        }
+    ],
+    "out_args": [
         {
             "id": "centrality",
-            "kind": "VECTOR",
-            "value": "G.EMPTY_VERT_VECTOR"
+            "kind": "VECTOR"
         }
     ]
 }

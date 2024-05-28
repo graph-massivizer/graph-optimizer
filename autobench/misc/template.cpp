@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
     {{ decl }}
     {% endfor %}
 
-    if (argc != {{ names|length + 1 }}) {
+    if (argc != {{ argc + 1 }}) {
         return -1;
     }
 

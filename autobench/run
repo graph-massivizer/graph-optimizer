@@ -30,6 +30,7 @@ def RAND_VERT_VECTOR(size_verts):
 
 def generate_code(bgo):
     context = {
+        'argc': sum([0 if arg.endswith('*') else 1 for arg in bgo['args']]),
         'method': bgo['name'],
         'header': bgo['header'],
     }
@@ -47,7 +48,7 @@ def generate_code(bgo):
 
 def generate_case(abs_bgo, data):
     args, refs = [], {}
-    for arg in abs_bgo['args']:
+    for arg in abs_bgo['in_args']:
         if arg['kind'] == 'GRAPH':
             args.append(data['path'])
             refs[arg['id']] = {
@@ -60,9 +61,6 @@ def generate_case(abs_bgo, data):
             if val == 'RAND_VERT_VECTOR':
                 vector = RAND_VERT_VECTOR(refs[src]['SIZE_VERTS'])
                 args.append(vector)
-        
-            elif val == 'EMPTY_VERT_VECTOR':
-                args.append(refs[src]['SIZE_VERTS'])
 
     return args
 
