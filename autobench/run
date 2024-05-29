@@ -63,6 +63,12 @@ def generate_case(abs_bgo, data):
                 args.append(vector)
             refs[arg['id']] = { 'SIZE': len(vector) }
 
+        elif arg['kind'] == 'VERTEX':
+            src, val = arg['value'].split('.')
+            if val == 'RAND_VERT':
+                vertex = RAND_VERT_VECTOR(refs[src]['SIZE_VERTS'])[0]
+                args.append(vertex)
+
     if 'stats' in abs_bgo:
         for stat in abs_bgo['stats']:
             src, val = stat.split('.')

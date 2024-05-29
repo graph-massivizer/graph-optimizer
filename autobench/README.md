@@ -91,3 +91,9 @@ You can run the job using `sbatch autobench.job`.
         - `GRAPH.RAND_VERT_VECTOR`
     - Statistics:
         - `VECTOR.SIZE`
+- `VERTEX`
+    - Implementations:
+        - `int`
+        - `GrB_Index`
+    - values
+        - `GRAPH.RAND_VERT`

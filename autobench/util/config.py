@@ -76,4 +76,22 @@ TRANSLATIONS = {
         'decl': 'GrB_Vector arg_{i};',
         'name': '&arg_{i}',
     },
+
+    'int': {
+        'decl': 'int arg_{i} = arg_{i} = (GrB_Index) atoi(argv[{i}]);',
+        'name': 'arg_{i}',
+    },
+    'GrB_Index': {
+        'decl': 'GrB_Index arg_{i} = (GrB_Index) atoi(argv[{i}]);',
+        'name': 'arg_{i}',
+    },
+
+    'int*': {
+        'decl': 'int arg_{i};',
+        'name': '&arg_{i}',
+    },
+    'GrB_Index*': {
+        'decl': 'GrB_Index arg_{i};',
+        'name': '&arg_{i}',
+    },
 }
