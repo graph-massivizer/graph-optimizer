@@ -47,7 +47,7 @@ def generate_code(bgo):
 
 
 def generate_case(abs_bgo, data):
-    args, refs = [], {}
+    args, stats, refs = [], {}, {}
     for arg in abs_bgo['in_args']:
         if arg['kind'] == 'GRAPH':
             args.append(data['path'])
@@ -61,8 +61,14 @@ def generate_case(abs_bgo, data):
             if val == 'RAND_VERT_VECTOR':
                 vector = RAND_VERT_VECTOR(refs[src]['SIZE_VERTS'])
                 args.append(vector)
+            refs[arg['id']] = { 'SIZE': len(vector) }
 
-    return args
+    if 'stats' in abs_bgo:
+        for stat in abs_bgo['stats']:
+            src, val = stat.split('.')
+            stats[stat] = refs[src][val]
+
+    return args, stats
 
 
 if __name__ == '__main__':
@@ -109,7 +115,7 @@ if __name__ == '__main__':
         for data in args.data:
             data = {**config['data'][data], 'path': data}
             for _ in range(args.num):
-                bgo_args = generate_case(abs_bgo, data)
+                bgo_args, bgo_stats = generate_case(abs_bgo, data)
                 for i, arg in enumerate(bgo_args):
                     if type(arg) is list:
                         list_path = join(TEMP_DIR, f'arg{i}.mtx')
@@ -132,7 +138,8 @@ if __name__ == '__main__':
                     'bgo_path': dirname(path),
                     'runtime_ns': runtime,
                     'status': status,
-                    **{f'arg_{i}': arg for i, arg in enumerate(bgo_args)}
+                    # **{f'arg_{i}': arg for i, arg in enumerate(bgo_args)},
+                    **bgo_stats,
                 }
 
                 with open(results_file, 'a') as f:

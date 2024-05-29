@@ -79,6 +79,9 @@ You can run the job using `sbatch autobench.job`.
         - `CMatrix<int>`
         - `GrB_Matrix`
         - `LAGraph_Graph`
+    - Statistics:
+        - `GRAPH.SIZE_VERTS`
+        - `GRAPH.SIZE_EDGES`
 - `VECTOR`
     - Implementations:
         - `CArray<int>`
@@ -86,3 +89,5 @@ You can run the job using `sbatch autobench.job`.
         - `GrB_Vector`
     - Values
         - `GRAPH.RAND_VERT_VECTOR`
+    - Statistics:
+        - `VECTOR.SIZE`
