@@ -122,7 +122,7 @@ GrB_Info BC_GB(GrB_Vector *delta, GrB_Matrix A, GrB_Index *s, GrB_Index nsver)
   // index and value arrays needed to build numsp
   GrB_Index *i_nsver = (GrB_Index*)malloc(sizeof(GrB_Index)*nsver);
   int32_t   *ones    = (int32_t*)  malloc(sizeof(int32_t)*nsver);
-  for(uint i=0; i<nsver; ++i) {
+  for(int i=0; i<nsver; ++i) {
     i_nsver[i] = i;
     ones[i] = 1;
   }

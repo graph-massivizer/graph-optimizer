@@ -1,7 +1,7 @@
 [
     {
         "id": 0,
-        "name": "BC",
+        "name": "bc",
         "dependencies": [],
         "performances": [
             {
@@ -18,7 +18,7 @@
     },
     {
         "id": 1,
-        "name": "FM",
+        "name": "find_max",
         "dependencies": [0],
         "performances": [
             {
@@ -35,7 +35,7 @@
     },
     {
         "id": 2,
-        "name": "BFS",
+        "name": "bfs",
         "dependencies": [1],
         "performances": [
             {
@@ -52,7 +52,7 @@
     },
     {
         "id": 3,
-        "name": "FP",
+        "name": "find_path",
         "dependencies": [2],
         "performances": [
             {
@@ -66,5 +66,5 @@
                 "energy": 60
             }
         ]
-    },
+    }
 ]
