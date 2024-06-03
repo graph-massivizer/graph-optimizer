@@ -6,6 +6,8 @@
 #include <vector>
 #include <iostream>
 
+#include "datastructures.hpp"
+
 template <typename T>
 void pretty_print_array(T *arr, int n, std::string name) {
     std::cout << name.c_str() << ": [";
@@ -57,6 +59,57 @@ void read_graph_GB(GrB_Matrix *M, char *fileName) {
 
     if (fd != NULL)
         fclose(fd);
+}
+
+void read_graph_LA(LAGraph_Graph *G, char *filename) {
+    char msg[LAGRAPH_MSG_LEN];
+    GrB_Matrix M;
+    read_graph_GB(&M, filename);
+    LAGraph_New(G, &M, LAGraph_ADJACENCY_DIRECTED, msg);
+}
+
+template <typename T>
+void read_graph_CMatrix(CMatrix<T> *G, char* filename) {
+    GrB_Matrix M;
+    read_graph_GB(&M, filename);
+
+    GrB_Index nrows;
+    GrB_Matrix_nrows(&nrows, M);
+
+    GrB_Index nvals;
+    GrB_Matrix_nvals(&nvals, M);
+
+    GrB_Index row_indices[nvals];
+    GrB_Index col_indices[nvals];
+    float values[nvals];
+    GrB_Matrix_extractTuples_FP32(row_indices, col_indices, values, &nvals, M);
+
+    G->init(nrows, nrows);
+    for (GrB_Index i = 0; i < nvals; i++) {
+        G->data[row_indices[i] * nrows + col_indices[i]] = (T) values[i];
+    }
+}
+
+template <typename T>
+void read_vector_CArray(CArray<T> *V, char* filename) {
+    GrB_Matrix M;
+    read_graph_GB(&M, filename);
+
+    GrB_Index ncols;
+    GrB_Matrix_ncols(&ncols, M);
+
+    GrB_Index nvals;
+    GrB_Matrix_nvals(&nvals, M);
+
+    GrB_Index row_indices[nvals];
+    GrB_Index col_indices[nvals];
+    float values[nvals];
+    GrB_Matrix_extractTuples_FP32(row_indices, col_indices, values, &nvals, M);
+
+    V->init(ncols);
+    for (GrB_Index i = 0; i < nvals; i++) {
+        V->data[col_indices[i]] = (T) values[i];
+    }
 }
 
 /*

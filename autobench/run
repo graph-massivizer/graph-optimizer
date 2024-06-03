@@ -1,0 +1,155 @@
+#!/usr/bin/env python
+
+import os
+import sys
+
+from os.path import abspath, basename, dirname, exists, join
+from pathlib import Path
+from subprocess import run, PIPE
+
+import json
+import random
+import time
+from datetime import datetime
+
+from csv import DictWriter
+
+from scipy.io import mmwrite
+
+from util.config import *
+
+
+def RAND_VERT_VECTOR(size_verts):
+    size = random.randrange(1, size_verts)
+    vector = list(range(size_verts))
+    random.shuffle(vector)
+    vector = vector[:size]
+    vector.sort()
+    return vector
+
+
+def generate_code(bgo):
+    context = {
+        'argc': sum([0 if arg.endswith('*') else 1 for arg in bgo['args']]),
+        'method': bgo['name'],
+        'header': bgo['header'],
+    }
+    for phase in ['decl', 'init', 'free', 'name']:
+        context[f'{phase}s'] = []
+        for i, arg in enumerate(bgo['args'], start=1):
+            if phase not in TRANSLATIONS[arg]:
+                continue
+            context[f'{phase}s'].append(TRANSLATIONS[arg][phase].format(i=i))
+    with open(join(bgo['path'], 'bench.cpp'), 'w') as f:
+        f.write(TEMPLATE.render(context))
+    
+    run('make bench'.split(' '), cwd=bgo['path'])
+
+
+def generate_case(abs_bgo, data):
+    args, stats, refs = [], {}, {}
+    for arg in abs_bgo['in_args']:
+        if arg['kind'] == 'GRAPH':
+            args.append(data['path'])
+            refs[arg['id']] = {
+                'SIZE_VERTS': data['size_verts'],
+                'SIZE_EDGES': data['size_edges'],
+            }
+        
+        elif arg['kind'] == 'VECTOR':
+            src, val = arg['value'].split('.')
+            if val == 'RAND_VERT_VECTOR':
+                vector = RAND_VERT_VECTOR(refs[src]['SIZE_VERTS'])
+                args.append(vector)
+            refs[arg['id']] = { 'SIZE': len(vector) }
+
+        elif arg['kind'] == 'VERTEX':
+            src, val = arg['value'].split('.')
+            if val == 'RAND_VERT':
+                vertex = RAND_VERT_VECTOR(refs[src]['SIZE_VERTS'])[0]
+                args.append(vertex)
+
+    if 'stats' in abs_bgo:
+        for stat in abs_bgo['stats']:
+            src, val = stat.split('.')
+            stats[stat] = refs[src][val]
+
+    return args, stats
+
+
+if __name__ == '__main__':
+    import argparse
+
+    timestamp = (datetime.utcnow() - datetime(1970, 1, 1)).total_seconds()
+
+    if not exists(CONFIG_FILE):
+        print(f"Config file does not exist! ({CONFIG_FILE})", file=sys.stderr)
+        exit(-1)
+    
+    with open(CONFIG_FILE, 'r') as f:
+        config = json.load(f)
+    
+    data = list(config['data'].keys())
+    bgos = sum([list(config['bgos'][abs_bgo].keys()) for abs_bgo in config['bgos']], [])
+    bgos = {
+        imp_bgo: {
+            'name': imp_bgo,
+            'path': config['bgos'][abs_bgo]['implementations'][imp_bgo]['path'],
+            'abs_bgo': abs_bgo,
+            'args': config['bgos'][abs_bgo]['implementations'][imp_bgo]['args'],
+            'header': config['bgos'][abs_bgo]['implementations'][imp_bgo]['header'],
+        } for abs_bgo in config['bgos'] for imp_bgo in config['bgos'][abs_bgo]['implementations']
+    }
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--seed', type=int, default=None)
+    parser.add_argument('--data', nargs='+', choices=data, default=data)
+    parser.add_argument('--bgos', nargs='+', choices=bgos, default=bgos)
+    parser.add_argument('--num', type=int, default=10)
+    args = parser.parse_args()
+
+    random.seed(args.seed)
+
+    for bgo in args.bgos:
+        generate_code(bgos[bgo])
+
+        abs_bgo = config['bgos'][bgos[bgo]['abs_bgo']]
+
+        path = join(bgos[bgo]['path'], 'bench')
+        results_file = abspath(join(bgos[bgo]['path'], f'../results_{timestamp}.csv'))
+
+        for data in args.data:
+            data = {**config['data'][data], 'path': data}
+            for _ in range(args.num):
+                bgo_args, bgo_stats = generate_case(abs_bgo, data)
+                for i, arg in enumerate(bgo_args):
+                    if type(arg) is list:
+                        list_path = join(TEMP_DIR, f'arg{i}.mtx')
+                        mmwrite(list_path, [arg])
+                        bgo_args[i] = list_path
+                
+                bgo_args = [str(arg) for arg in bgo_args]
+                print(f"Running case\n"
+                    f"    path: {path}\n"
+                    f"    args: {', '.join(bgo_args)}")
+                proc = run([path] + bgo_args, stdout=PIPE)
+                if proc.returncode != 0:
+                    print("An error occurred!")
+                print()
+                
+                runtime, status = RESULT_PATTERN.findall(proc.stdout.decode('utf-8'))[0]
+
+                result = {
+                    'timestamp': time.strftime('%Y-%m-%d %H:%M:%S %Z', time.gmtime(time.time())),
+                    'bgo_path': dirname(path),
+                    'runtime_ns': runtime,
+                    'status': status,
+                    # **{f'arg_{i}': arg for i, arg in enumerate(bgo_args)},
+                    **bgo_stats,
+                }
+
+                with open(results_file, 'a') as f:
+                    writer = DictWriter(f, result.keys())
+                    if os.path.getsize(results_file) == 0:
+                        writer.writeheader()
+                    writer.writerow(result)
