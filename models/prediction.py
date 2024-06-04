@@ -27,14 +27,14 @@ if __name__ == '__main__':
 
     # Loop over bgo dag and do energy and performance predictions for all hardware configurations.
     for i, bgo in enumerate(bgo_dag):
-        performance_model = globals().get(f'{bgo['name']}_performance_model')
-        energy_model = globals().get(f'{bgo['name']}_energy_model')
+        performance_model = globals().get(f'{bgo["name"]}_performance_model')
+        energy_model = globals().get(f'{bgo["name"]}_energy_model')
 
         # Error handling
         if performance_model is None:
-            utils.exit_with_error(f'No performance model found for BGO {bgo['name']}')
+            utils.exit_with_error(f'No performance model found for BGO {bgo["name"]}')
         if energy_model is None:
-            utils.exit_with_error(f'No energy model found for BGO {bgo['name']}')
+            utils.exit_with_error(f'No energy model found for BGO {bgo["name"]}')
 
         bgo_dag[i]['performances'] = []
 
@@ -47,4 +47,4 @@ if __name__ == '__main__':
 
             bgo_dag[i]['performances'].append({'host': host['name'], 'runtime': performance, 'energy': energy})
 
-    print(json.dumps(bgo_dag, indent=4))
+    print(json.dumps(bgo_dag))
