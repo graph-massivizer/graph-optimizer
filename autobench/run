@@ -80,7 +80,7 @@ def generate_case(abs_bgo, data):
 if __name__ == '__main__':
     import argparse
 
-    timestamp = (datetime.utcnow() - datetime(1970, 1, 1)).total_seconds()
+    timestamp = int((datetime.utcnow() - datetime(1970, 1, 1)).total_seconds())
 
     if not exists(CONFIG_FILE):
         print(f"Config file does not exist! ({CONFIG_FILE})", file=sys.stderr)
