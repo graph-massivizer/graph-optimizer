@@ -60,6 +60,7 @@ bool float_gt() {
     // Initialize a random array of floats
     float a[1000000];
     register bool b;
+    register float val;
     for (int i = 0; i < 1000000; i++) {
         a[i] = (float)rand() / RAND_MAX;
     }
@@ -68,7 +69,7 @@ bool float_gt() {
     clock_gettime(CLOCK_MONOTONIC, &before);
 
     for (register int i = 0; i < 1000000; i++) {
-        REPEAT_1000(b = 0.1 > 0.5;)
+        REPEAT_1000(val = a[i]; b = val > 0.5;)
     }
 
     clock_gettime(CLOCK_MONOTONIC, &after);

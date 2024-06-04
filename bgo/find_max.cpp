@@ -7,8 +7,8 @@ int find_max(GrB_Vector v, int n) {
 
     float max = -1.;
     int max_index = -1;
+    float val;
     for (int i = 0; i < n; i++) {
-        float val;
         GrB_Vector_extractElement_FP32(&val, v, i);
         if (val > max) {
             max = val;
@@ -20,11 +20,13 @@ int find_max(GrB_Vector v, int n) {
 }
 
 int find_max(float *v, int n) {
-    float max = -1.;
-    int max_index = -1;
-    for (int i = 0; i < n; i++) {
-        if (v[i] > max) {
-            max = v[i];
+    register float max = -1.;
+    register int max_index = -1;
+    register float val;
+    for (register int i = 0; i < n; i++) {
+        val = v[i];
+        if (val > max) {
+            max = val;
             max_index = i;
         }
     }
