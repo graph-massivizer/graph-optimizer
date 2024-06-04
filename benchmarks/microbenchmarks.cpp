@@ -1,9 +1,12 @@
 #include <time.h>
 #include <stdio.h>
 #include <queue>
+#include <cstdlib>
 
 #define REPEAT_10(x) x x x x x x x x x x
-#define REPEAT_10000(x) REPEAT_10(REPEAT_10(REPEAT_10(REPEAT_10(x))))
+#define REPEAT_100(x) REPEAT_10(REPEAT_10(x))
+#define REPEAT_1000(x) REPEAT_10(REPEAT_100(x))
+#define REPEAT_10000(x) REPEAT_10(REPEAT_1000(x))
 
 int queue_ops() {
     register int a = 42;
@@ -53,8 +56,32 @@ int int_add() {
     return a;
 }
 
+bool float_gt() {
+    // Initialize a random array of floats
+    float a[1000000];
+    register bool b;
+    for (int i = 0; i < 1000000; i++) {
+        a[i] = (float)rand() / RAND_MAX;
+    }
+
+    struct timespec before, after;
+    clock_gettime(CLOCK_MONOTONIC, &before);
+
+    for (register int i = 0; i < 1000000; i++) {
+        REPEAT_1000(b = 0.1 > 0.5;)
+    }
+
+    clock_gettime(CLOCK_MONOTONIC, &after);
+    double time = (double)(after.tv_sec - before.tv_sec) +
+              (double)(after.tv_nsec - before.tv_nsec) * 1e-9;
+    printf("float gt: %.6e\n", time);
+
+    return b;
+}
+
 int main() {
     queue_ops();
     int_add();
+    float_gt();
     return 0;
 }
