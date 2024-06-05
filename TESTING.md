@@ -6,7 +6,7 @@ This document describes the steps needed to be taken by the beta testers to test
 The Graph-Optimizer tool performs the following functions:
 - Predicts the execution time and energy consumption for a given BGO or DAG of BGOs on a specific hardware configuration.
 - Returns the model in symbolical form with graph properties as symbols or predicts execution times if the graph properties are specified.
-- This is done via an API where issuing a POST request to `<api_url>/models` with the BGO DAG and hardware configuration returns the annotated DAG with symbolical models. Calling `<api_url>/evaluate` with the BGO DAG, hardware configuration, and graph properties returns the annotated DAG with predicted execution times.
+- This is done via an API where issuing a POST request to `<api_url>/models` with the BGO DAG and hardware configuration returns an annotated DAG with calibrated symbolical models. Calling `<api_url>/evaluate` with the BGO DAG, hardware configuration, and graph properties returns an annotated DAG with predicted execution times.
 
 Examples of the input DAG of BGOs and corresponding output annotated DAG are given below.
 
@@ -22,7 +22,7 @@ Examples of the input DAG of BGOs and corresponding output annotated DAG are giv
 ```
 
 ### Example output annotated DAG
-1. With symbolical models:
+1. With calibrated symbolical models:
 ```JSON
 [
     {
@@ -73,7 +73,6 @@ To use the Graph-Optimizer tool, ensure you have the following:
 
 1. **Python**:
     - Version: 3.8 or higher
-    - Ensure Python is properly installed and accessible via the command line.
 
 2. **Pip**:
     - Ensure Pip, the Python package installer, is installed and up to date.
@@ -90,12 +89,12 @@ To use the Graph-Optimizer tool, ensure you have the following:
       ```
 
 3. **Jupyter Notebook** (optional):
-    - For running the prediction, a jupyter notebook example is provided.
+    - A jupyter notebook example is provided, showing how to issue a request to the API in python.
     - To run this example, make sure a working Jupyter Notebook environment is available.
 
 ## Testing Steps
 ### Step 1: Check if model exists
-Ensure that the models you want to use are located in the `models` folder. The tool only supports models that are present in this directory. Verify that your desired model is correctly placed in the models folder before proceeding.
+Ensure that the models you want to use are located in the `models` folder. The tool only supports models that are present in this directory. Only use BGO names that have their own subdirectory with energy and performance models in the `models` folder.
 
 The structure of the `models` folder is as follows:
 
@@ -111,7 +110,7 @@ The structure of the `models` folder is as follows:
     └── ...                 # Other BGOs and miscellaneous files
 
 ### Step 2: Specify input dag
-Define the input BGO DAG in JSON format. This DAG should include one or multiple BGOs and their dependencies. For instance, consider the following example with multiple BGOs and dependencies:
+Define the input BGO DAG in JSON format. This DAG should include one or multiple BGOs and their dependencies. The BGO name should match the name of the BGO folder in the `models` directory. The dependencies should be specified as a list of BGO id's that the current BGO depends on. For instance, consider the following example with multiple BGOs and dependencies:
 ```JSON
 [
     {
@@ -131,7 +130,7 @@ Define the input BGO DAG in JSON format. This DAG should include one or multiple
     }
 ]
 ```
-The BGO name should match the name of the BGO folder in the `models` directory. The dependencies should be specified as a list of BGO id's that the current BGO depends on.
+
 
 ### Step 3: Specify hardware configuration
 Provide the hardware configuration in JSON format. This configuration should list all unique available hosts in the data center, including details about CPUs and, if applicable, GPUs. An example is given below:
@@ -177,7 +176,7 @@ Provide the hardware configuration in JSON format. This configuration should lis
 }
 ```
 `Hosts` is a list of all unique available hosts in the data center. For example, a data center can have two types of nodes, one standard compute node, and a stronger node with multiple GPUs. Make sure all microbenchmarks required by the bgo model are present in the hardware configuration. This can be verified by checking the `performance_model.py` file in the respective BGO folder.
-A more comprehensive example is given in [api/hardware.json](api/hardware.json).
+A more comprehensive example is provided in [api/hardware.json](api/hardware.json).
 
 ### Step 4: Specify graph properties
 Create a single JSON file containing the graph properties. Ensure that all properties required by the BGO model are included.
@@ -199,12 +198,16 @@ Create a single JSON file containing the graph properties. Ensure that all prope
     ```bash
     flask --app api/api.py run
     ```
-2. Run the prediction by submitting a POST request to the api on [localhost:5000](http://localhost:5000)
-    - For obtaining the calibrated symbolical models, issue a post request to [localhost:5000/models](http://localhost:5000/models), with the following post data:
+    This will start the server on `localhost:5000`. Use the following command to start the server on a different port:
+    ```bash
+    flask --app api/api.py run --port <port_number>
+    ```
+2. Run the prediction by submitting a POST request to the api
+    - For obtaining the calibrated symbolical models, issue a post request to [localhost:<port_number>/models](http://localhost:5000/models), with the following post data:
         - "hardware": The hardware configuration in JSON format, as a string.
         - "input_dag": The input BGO DAG in JSON format, as a string.
-    - For obtaining the predicted execution times, issue a post request to [localhost:5000/evaluate](http://localhost:5000/evaluate), with the following post data:
+    - For obtaining the predicted execution times, issue a post request to [localhost:<port_number>/evaluate](http://localhost:5000/evaluate), with the following post data:
         - "hardware": The hardware configuration in JSON format, as a string.
         - "input_dag": The input BGO DAG in JSON format, as a string.
         - "graph_properties": The graph properties in JSON format, as a string.
-    - An example on how to issue an API call is given in [api/api_call.ipynb](api/api_call.ipynb).
+    - Examples on how to correctly call the API in python is given in [api/api_call.ipynb](api/api_call.ipynb).
