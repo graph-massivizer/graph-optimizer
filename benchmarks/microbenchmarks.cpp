@@ -81,8 +81,8 @@ bool float_gt() {
 }
 
 int main() {
-    queue_ops();
-    int_add();
+    // queue_ops();
+    // int_add();
     float_gt();
     return 0;
 }

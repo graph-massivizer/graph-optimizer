@@ -10,6 +10,9 @@ bgo/*/*/bench.cpp
 # Prerequisites
 *.d
 
+# Assimbly files
+*.s
+
 # Compiled Object files
 *.slo
 *.lo

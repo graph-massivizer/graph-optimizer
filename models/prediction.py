@@ -17,13 +17,17 @@ if __name__ == '__main__':
     arguments = sys.argv[1:]
 
     # Error handling.
-    if len(arguments) != 3:
-        utils.exit_with_error('Usage: ./prediction.py <hardware_information_json> <bgo_dag> <graph_characteristics>')
+    if len(arguments) < 2:
+        utils.exit_with_error('Usage: ./prediction.py <hardware_information_json> <bgo_dag> [graph_characteristics]')
 
     # Read the hardware information from the first argument.
     hardware = utils.try_cast_json_dict(utils.check_file(arguments[0]), 'Invalid JSON format for hardware information')
     bgo_dag = utils.try_cast_json_list(utils.check_file(arguments[1]), 'Invalid JSON format for BGO DAG')
-    graph_characteristics = utils.try_cast_json_dict(utils.check_file(arguments[2]), 'Invalid JSON format for graph characteristics')
+    graph_characteristics = None
+
+    # Evaluate the model if the last argument is 'evaluate_model'.
+    if len(arguments) == 3:
+        graph_characteristics = utils.try_cast_json_dict(utils.check_file(arguments[2]), 'Invalid JSON format for graph characteristics')
 
     # Loop over bgo dag and do energy and performance predictions for all hardware configurations.
     for i, bgo in enumerate(bgo_dag):
@@ -40,11 +44,13 @@ if __name__ == '__main__':
 
         # Predict performance and energy, and annotate bgo_dag with the prediction values for each host.
         for host in hardware['hosts']:
-            performance = evaluate(performance_model.predict(host['cpus']['benchmarks']), graph_characteristics)
-            energy = evaluate(energy_model.predict(host['cpus']['benchmarks']), graph_characteristics)
-            # performance = performance_model.predict(host['cpus']['benchmarks'])
-            # energy = energy_model.predict(host['cpus']['benchmarks'])
+            if graph_characteristics is not None:
+                performance = evaluate(performance_model.predict(host['cpus']['benchmarks']), graph_characteristics)
+                energy = evaluate(energy_model.predict(host['cpus']['benchmarks']), graph_characteristics)
+            else:
+                performance = performance_model.predict(host['cpus']['benchmarks'])
+                energy = energy_model.predict(host['cpus']['benchmarks'])
 
             bgo_dag[i]['performances'].append({'host': host['name'], 'runtime': performance, 'energy': energy})
 
-    print(json.dumps(bgo_dag))
+    print(json.dumps(bgo_dag, indent=4))
