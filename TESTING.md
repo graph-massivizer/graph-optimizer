@@ -4,7 +4,7 @@ This document describes the steps needed to be taken by the beta testers to test
 
 ## Tool description
 The Graph-Optimizer tool performs the following functions:
-- Predicts the execution time and energy consumption for a given BGO or DAG of BGOs on a specific hardware configuration.
+- Predicts the execution time (in milliseconds) and energy consumption (in Joules) for a given BGO or DAG of BGOs on a specific hardware configuration.
 - Returns the model in symbolical form with graph properties as symbols or predicts execution times if the graph properties are specified.
 - This is done via an API where issuing a POST request to `<api_url>/models` with the BGO DAG and hardware configuration returns an annotated DAG with calibrated symbolical models. Calling `<api_url>/evaluate` with the BGO DAG, hardware configuration, and graph properties returns an annotated DAG with predicted execution times.
 
