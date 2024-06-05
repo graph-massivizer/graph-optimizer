@@ -203,10 +203,10 @@ Create a single JSON file containing the graph properties. Ensure that all prope
     flask --app api/api.py run --port <port_number>
     ```
 2. Run the prediction by submitting a POST request to the api
-    - For obtaining the calibrated symbolical models, issue a post request to [localhost:<port_number>/models](http://localhost:5000/models), with the following post data:
+    - For obtaining the calibrated symbolical models, issue a post request to `localhost:<port_number>/models`, with the following post data:
         - "hardware": The hardware configuration in JSON format, as a string.
         - "input_dag": The input BGO DAG in JSON format, as a string.
-    - For obtaining the predicted execution times, issue a post request to [localhost:<port_number>/evaluate](http://localhost:5000/evaluate), with the following post data:
+    - For obtaining the predicted execution times, issue a post request to `localhost:<port_number>/evaluate`, with the following post data:
         - "hardware": The hardware configuration in JSON format, as a string.
         - "input_dag": The input BGO DAG in JSON format, as a string.
         - "graph_properties": The graph properties in JSON format, as a string.
