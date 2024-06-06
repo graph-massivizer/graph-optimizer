@@ -100,17 +100,17 @@ bool int_neq() {
 }
 
 int binary_heap() {
-    register int N = 100000;
+    register int N = 1000;
 
     struct timespec before, after;
     clock_gettime(CLOCK_MONOTONIC, &before);
-    for (register int i = 0; i < 10000; i++) {
+    for (register int i = 0; i < 1000; i++) {
         BinaryHeap heap1(N);
     }
     clock_gettime(CLOCK_MONOTONIC, &after);
 
     double insert_max_time = (double)(after.tv_sec - before.tv_sec) +
-              (double)(after.tv_nsec - before.tv_nsec) * 1e-9;
+              (double)(after.tv_nsec - before.tv_nsec) * 1e-6;
     printf("binary heap insert max: %.6e\n", insert_max_time);
 
     double extract_min_time = 0;
@@ -118,11 +118,11 @@ int binary_heap() {
     for (register int i = 0; i < N; i++) {
         BinaryHeap heap2(N);
         clock_gettime(CLOCK_MONOTONIC, &before);
-        REPEAT_10000(min = heap2.extract_min();)
+        REPEAT_1000(min = heap2.extract_min();)
         clock_gettime(CLOCK_MONOTONIC, &after);
 
         extract_min_time += (double)(after.tv_sec - before.tv_sec) +
-              (double)(after.tv_nsec - before.tv_nsec) * 1e-9;
+              (double)(after.tv_nsec - before.tv_nsec) * 1e-6;
     }
     printf("binary heap extract min: %.6e\n", extract_min_time);
 
@@ -132,11 +132,11 @@ int binary_heap() {
         BinaryHeap heap3(N);
 
         clock_gettime(CLOCK_MONOTONIC, &before);
-        REPEAT_10000(heap3.decrease_key(i, 0);)
+        REPEAT_1000(heap3.decrease_key(i, 0);)
         clock_gettime(CLOCK_MONOTONIC, &after);
 
         heap_decrease_key_time += (double)(after.tv_sec - before.tv_sec) +
-              (double)(after.tv_nsec - before.tv_nsec) * 1e-9;
+              (double)(after.tv_nsec - before.tv_nsec) * 1e-6;
     }
     printf("binary heap decrease key: %.6e\n", heap_decrease_key_time);
 
