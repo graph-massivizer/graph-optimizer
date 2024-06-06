@@ -1,0 +1,7 @@
+#!/bin/sh
+#SBATCH --time=04:00:00
+#SBATCH -N 1
+
+. env/bin/activate
+
+autobench/run --num 10 --bgos GrB2CM --data data/random/*.mtx
