@@ -1,2 +1,7 @@
-def predict(microbenchmarks):
-    return '10n'
+from find_path import performance_model
+
+def predict(hardware):
+    performance = performance_model.predict(hardware)
+    wattage = hardware['cpus']['wattage']
+
+    return f'({performance}) / 1000 * {wattage}'

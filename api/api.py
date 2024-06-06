@@ -1,7 +1,10 @@
 from flask import Flask, request, jsonify
 import json
 import subprocess
+import pathlib
 
+prediction_script = str(pathlib.Path(__file__).parent.parent.absolute()) + '/models/prediction.py'
+print(prediction_script)
 app = Flask(__name__)
 
 def predict(request, evaluate):
@@ -10,10 +13,10 @@ def predict(request, evaluate):
 
     if (evaluate):
         graph_props = request.form.get('graph_props')
-        output = subprocess.check_output(['python3', '../models/prediction.py', hardware, bgo_dag, graph_props])
+        output = subprocess.check_output(['python3', prediction_script, hardware, bgo_dag, graph_props])
         return output
 
-    output = subprocess.check_output(['python3', '../models/prediction.py', hardware, bgo_dag])
+    output = subprocess.check_output(['python3', prediction_script, hardware, bgo_dag])
     return output
 
 

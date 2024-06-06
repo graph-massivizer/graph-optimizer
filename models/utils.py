@@ -44,3 +44,19 @@ def try_cast_float_list(string, error):
         return list(map(lambda x: float(x.strip()), l))
     except:
         exit_with_error(error)
+
+
+def avg_mem_access_time(miss_rates, mem_access_times):
+    time = 0
+    final_component = 1
+    for i in range(len(miss_rates)):
+        summand = 1
+        for j in range(i):
+            summand *= miss_rates[j]
+        summand *= (1-miss_rates[i])*mem_access_times[i]
+        time += summand
+        final_component *= miss_rates[i]
+
+    time += final_component*mem_access_times[-1]
+
+    return time

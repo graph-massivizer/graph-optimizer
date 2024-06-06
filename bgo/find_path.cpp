@@ -5,7 +5,7 @@
 std::vector<int> find_path(int *parent, int start, int end) {
     std::vector<int> path;
 
-    int current = start;
+    register int current = start;
     while (current != end) {
         path.push_back(current);
         current = parent[current];
@@ -18,7 +18,7 @@ std::vector<int> find_path(int *parent, int start, int end) {
 std::vector<int> find_path(GrB_Vector parent, int start, int end) {
     std::vector<int> path;
 
-    int current = start;
+    register int current = start;
     while (current != end) {
         path.push_back(current);
         GrB_Vector_extractElement_INT32(&current, parent, current);

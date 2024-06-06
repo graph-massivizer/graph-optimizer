@@ -9,7 +9,7 @@
                 "clock_speed": 2.10,
                 "cores": 16,
                 "threads": 32,
-                "wattage": 100,
+                "wattage": 250,
                 "amount": 2,
                 "benchmarks": {
                     "T_int_add": 2.4,
@@ -20,6 +20,7 @@
                     "T_float_sub": 11,
                     "T_float_mul": 20,
                     "T_float_div": 22,
+                    "T_float_gt": 0.8,
                     "T_q_pop": 11.2,
                     "T_q_push": 16.1,
                     "T_q_front": 14.5,
@@ -72,7 +73,7 @@
                 "clock_speed": 2.50,
                 "cores": 8,
                 "threads": 16,
-                "wattage": 100,
+                "wattage": 160,
                 "amount": 2,
                 "benchmarks": {
                     "T_int_add": 3.4,
@@ -83,6 +84,7 @@
                     "T_float_sub": 11,
                     "T_float_mul": 20,
                     "T_float_div": 22,
+                    "T_float_gt": 1.2,
                     "T_q_pop": 16.2,
                     "T_q_push": 20.1,
                     "T_q_front": 17.5,

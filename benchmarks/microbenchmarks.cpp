@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <queue>
 #include <cstdlib>
+#include "../include/BinaryHeap.hpp"
 
 #define REPEAT_10(x) x x x x x x x x x x
 #define REPEAT_100(x) REPEAT_10(REPEAT_10(x))
@@ -69,7 +70,7 @@ bool float_gt() {
     clock_gettime(CLOCK_MONOTONIC, &before);
 
     for (register int i = 0; i < 1000000; i++) {
-        REPEAT_1000(val = a[i]; b = val > 0.5;)
+        REPEAT_1000(b = 0.1 > 0.5;)
     }
 
     clock_gettime(CLOCK_MONOTONIC, &after);
@@ -80,9 +81,72 @@ bool float_gt() {
     return b;
 }
 
+bool int_neq() {
+    register int a = 0;
+    register bool b;
+
+    struct timespec before, after;
+    clock_gettime(CLOCK_MONOTONIC, &before);
+
+    for (register int i = 0; i < 100000; i++) {
+        REPEAT_10000(b = a != 0;)
+    }
+
+    clock_gettime(CLOCK_MONOTONIC, &after);
+    double time = (double)(after.tv_sec - before.tv_sec) +
+              (double)(after.tv_nsec - before.tv_nsec) * 1e-9;
+    printf("int neq: %.6e\n", time);
+    return b;
+}
+
+int binary_heap() {
+    register int N = 100000;
+
+    struct timespec before, after;
+    clock_gettime(CLOCK_MONOTONIC, &before);
+    for (register int i = 0; i < 10000; i++) {
+        BinaryHeap heap1(N);
+    }
+    clock_gettime(CLOCK_MONOTONIC, &after);
+
+    double insert_max_time = (double)(after.tv_sec - before.tv_sec) +
+              (double)(after.tv_nsec - before.tv_nsec) * 1e-9;
+    printf("binary heap insert max: %.6e\n", insert_max_time);
+
+    double extract_min_time = 0;
+    int min = 0;
+    for (register int i = 0; i < N; i++) {
+        BinaryHeap heap2(N);
+        clock_gettime(CLOCK_MONOTONIC, &before);
+        REPEAT_10000(min = heap2.extract_min();)
+        clock_gettime(CLOCK_MONOTONIC, &after);
+
+        extract_min_time += (double)(after.tv_sec - before.tv_sec) +
+              (double)(after.tv_nsec - before.tv_nsec) * 1e-9;
+    }
+    printf("binary heap extract min: %.6e\n", extract_min_time);
+
+    // worst case execution time
+    double heap_decrease_key_time = 0;
+    for (register int i = 0; i < N; i++) {
+        BinaryHeap heap3(N);
+
+        clock_gettime(CLOCK_MONOTONIC, &before);
+        REPEAT_10000(heap3.decrease_key(i, 0);)
+        clock_gettime(CLOCK_MONOTONIC, &after);
+
+        heap_decrease_key_time += (double)(after.tv_sec - before.tv_sec) +
+              (double)(after.tv_nsec - before.tv_nsec) * 1e-9;
+    }
+    printf("binary heap decrease key: %.6e\n", heap_decrease_key_time);
+
+    return min;
+}
+
 int main() {
     // queue_ops();
     // int_add();
-    float_gt();
+    // float_gt();
+    binary_heap();
     return 0;
 }

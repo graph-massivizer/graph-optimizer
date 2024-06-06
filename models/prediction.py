@@ -44,12 +44,11 @@ if __name__ == '__main__':
 
         # Predict performance and energy, and annotate bgo_dag with the prediction values for each host.
         for host in hardware['hosts']:
+            performance = performance_model.predict(host)
+            energy = energy_model.predict(host)
             if graph_characteristics is not None:
-                performance = evaluate(performance_model.predict(host['cpus']['benchmarks']), graph_characteristics)
-                energy = evaluate(energy_model.predict(host['cpus']['benchmarks']), graph_characteristics)
-            else:
-                performance = performance_model.predict(host['cpus']['benchmarks'])
-                energy = energy_model.predict(host['cpus']['benchmarks'])
+                performance = evaluate(performance, graph_characteristics)
+                energy = evaluate(energy, graph_characteristics)
 
             bgo_dag[i]['performances'].append({'host': host['name'], 'runtime': performance, 'energy': energy})
 

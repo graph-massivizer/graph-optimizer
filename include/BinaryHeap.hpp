@@ -76,7 +76,7 @@ class BinaryHeap{
         }
 
         // Sets the key value of node to n_val, an rearranges the heap
-        void decrease_key(int node, int n_val){ 
+        void decrease_key(int node, int n_val){
             int index = pos[node]; // Find index of given node
             heap[index].key = n_val;
             int parent = get_parent(index);
