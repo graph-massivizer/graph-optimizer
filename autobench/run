@@ -54,6 +54,7 @@ def generate_case(abs_bgo, data):
             refs[arg['id']] = {
                 'SIZE_VERTS': data['size_verts'],
                 'SIZE_EDGES': data['size_edges'],
+                'PATH': data['path'],
             }
         
         elif arg['kind'] == 'VECTOR':
@@ -142,9 +143,9 @@ if __name__ == '__main__':
                 result = {
                     'timestamp': time.strftime('%Y-%m-%d %H:%M:%S %Z', time.gmtime(time.time())),
                     'bgo_path': dirname(path),
+                    'bgo_func': bgos[bgo]['name'],
                     'runtime_ns': runtime,
                     'status': status,
-                    # **{f'arg_{i}': arg for i, arg in enumerate(bgo_args)},
                     **bgo_stats,
                 }
 
