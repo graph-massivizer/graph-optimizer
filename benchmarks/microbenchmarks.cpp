@@ -158,7 +158,7 @@ int vector_ops() {
         push_back_time += (double)(after.tv_sec - before.tv_sec) +
               (double)(after.tv_nsec - before.tv_nsec) * 1e-9;
 
-        temp = vec.pop_back();
+        temp = vec.back();
     }
     printf("vector push_back: %.6e\n", push_back_time);
 
