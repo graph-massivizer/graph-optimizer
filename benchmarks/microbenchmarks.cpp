@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <queue>
 #include <cstdlib>
+#include <vector>
 #include "../include/BinaryHeap.hpp"
 
 #define REPEAT_10(x) x x x x x x x x x x
@@ -143,10 +144,27 @@ int binary_heap() {
     return min;
 }
 
+std::vector<int> vector_ops() {
+    // push_back measurement
+    struct timespec before, after;
+    double push_back_time = 0;
+    for (register int i = 0; i < 100000; i++) {
+        std::vector<int> vec;
+        clock_gettime(CLOCK_MONOTONIC, &before);
+        REPEAT_10000(vec.push_back(i);)
+        clock_gettime(CLOCK_MONOTONIC, &after);
+
+        push_back_time += (double)(after.tv_sec - before.tv_sec) +
+              (double)(after.tv_nsec - before.tv_nsec) * 1e-9;
+    }
+    printf("vector push_back: %.6e\n", push_back_time);
+}
+
 int main() {
     // queue_ops();
     // int_add();
     // float_gt();
-    binary_heap();
+    // binary_heap();
+    vector_ops();
     return 0;
 }

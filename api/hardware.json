@@ -34,7 +34,10 @@
                     "T_L3_write": 20.9,
                     "L3_linesize": 64,
                     "T_DRAM_read": 62.5,
-                    "T_DRAM_write": 62.5
+                    "T_DRAM_write": 62.5,
+                    "T_heap_insert_max": 52.7,
+                    "T_heap_extract_min": 123.3,
+                    "T_heap_decrease_key": 12.7
                 }
             },
             "gpus": [
@@ -98,7 +101,11 @@
                     "T_L3_write": 20.9,
                     "L3_linesize": 64,
                     "T_DRAM_read": 80.5,
-                    "T_DRAM_write": 62.5
+                    "T_DRAM_write": 62.5,
+                    "T_heap_insert_max": 62.7,
+                    "T_heap_extract_min": 153.3,
+                    "T_heap_decrease_key": 22.7,
+                    "T_push_back"
                 }
             },
             "gpus": [
