@@ -95,7 +95,7 @@ def update_imp_bgo_config(config, base_dir, bgos_dir):
                 config['bgos'][abs_bgo_name]['implementations'][imp_bgo_name] = {}
             config['bgos'][abs_bgo_name]['implementations'][imp_bgo_name]['path'] = dirname(header_file)
             config['bgos'][abs_bgo_name]['implementations'][imp_bgo_name]['args'] = signature['args']
-            config['bgos'][abs_bgo_name]['implementations'][imp_bgo_name]['header'] = header_file
+            config['bgos'][abs_bgo_name]['implementations'][imp_bgo_name]['header'] = basename(header_file)
 
 
 if __name__ == '__main__':
