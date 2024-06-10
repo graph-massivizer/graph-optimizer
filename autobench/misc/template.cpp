@@ -11,14 +11,20 @@
 
 int main(int argc, char **argv) {
     char msg[LAGRAPH_MSG_LEN];
-    int status;
+    int status = -1;
 
     {% for decl in decls %}
     {{ decl }}
     {% endfor %}
 
-    if (argc != {{ argc + 1 }}) {
+    if (argc < {{ argc + 1 }} || argc > {{ argc + 2 }}) {
+        std::cerr << "Invalid number of arguments!" << std::endl;
         return -1;
+    }
+
+    int runs = 1;
+    if (argc == {{ argc + 2 }}) {
+        runs = atoi(argv[{{ argc + 1 }}]);
     }
 
     LAGraph_Init(msg);
@@ -27,19 +33,21 @@ int main(int argc, char **argv) {
     {{ init }}
     {% endfor %}
 
-    std::cout << "status,runtime_ns" << std::endl;
+    std::cout << "run,status,runtime_ns" << std::endl;
 
-    auto start = std::chrono::steady_clock::now();
+    for (int run = 0; run < runs; run++) {
+        auto start = std::chrono::steady_clock::now();
 
-    status = {{ method }} (
-        {% for name in names %}
-        {{ name }} {{ ", " if not loop.last }}
-        {% endfor %}
-    );
+        status = {{ method }} (
+            {% for name in names %}
+            {{ name }} {{ ", " if not loop.last }}
+            {% endfor %}
+        );
 
-    auto end = std::chrono::steady_clock::now();
-    auto runtime_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
-    std::cout << status << "," << runtime_ns << std::endl;
+        auto end = std::chrono::steady_clock::now();
+        auto runtime_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+        std::cout << run << "," << status << "," << runtime_ns << std::endl;
+    }
 
     {% for free in frees %}
     {{ free }}

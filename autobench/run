@@ -108,6 +108,7 @@ if __name__ == '__main__':
     parser.add_argument('--data', nargs='+', choices=data, default=data)
     parser.add_argument('--bgos', nargs='+', choices=bgos, default=bgos)
     parser.add_argument('--num', type=int, default=10)
+    parser.add_argument('--runs', type=int, default=10)
     args = parser.parse_args()
 
     random.seed(args.seed)
@@ -130,7 +131,7 @@ if __name__ == '__main__':
                         mmwrite(list_path, [arg])
                         bgo_args[i] = list_path
                 
-                bgo_args = [str(arg) for arg in bgo_args]
+                bgo_args = [str(arg) for arg in bgo_args] + [str(args.runs)]
                 print(f"Running case\n"
                     f"    path: {path}\n"
                     f"    args: {', '.join(bgo_args)}")
@@ -139,10 +140,11 @@ if __name__ == '__main__':
                     print("An error occurred!")
                 print()
                 
+                timestamp = time.strftime('%Y-%m-%d %H:%M:%S %Z', time.gmtime(time.time()))
                 reader = DictReader(StringIO(proc.stdout.decode('utf-8')))
                 for row in reader:
                     result = {
-                        'timestamp': time.strftime('%Y-%m-%d %H:%M:%S %Z', time.gmtime(time.time())),
+                        'timestamp': timestamp,
                         'bgo_path': dirname(path),
                         'bgo_func': bgos[bgo]['name'],
                         **row,

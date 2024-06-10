@@ -48,6 +48,7 @@ To run the benchmark, a populated `config.json` file is required in the root dir
 
 You can run a benchmark using `autobench/run`. You may also use one of the options like:
 - `--num N` : to specify the number of randomly generated inputs per graph/BGO pair.
+- `--runs N` : to specify the number of runs to perform with the same input.
 - `--data PATH` : to specify one or multiple graphs.
 - `--bgos NAME` : to specify one or multiple BGO implementations.
 
