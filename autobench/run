@@ -12,7 +12,8 @@ import random
 import time
 from datetime import datetime
 
-from csv import DictWriter
+from csv import DictReader, DictWriter
+from io import StringIO
 
 from scipy.io import mmwrite
 
@@ -138,19 +139,18 @@ if __name__ == '__main__':
                     print("An error occurred!")
                 print()
                 
-                runtime, status = RESULT_PATTERN.findall(proc.stdout.decode('utf-8'))[0]
+                reader = DictReader(StringIO(proc.stdout.decode('utf-8')))
+                for row in reader:
+                    result = {
+                        'timestamp': time.strftime('%Y-%m-%d %H:%M:%S %Z', time.gmtime(time.time())),
+                        'bgo_path': dirname(path),
+                        'bgo_func': bgos[bgo]['name'],
+                        **row,
+                        **bgo_stats,
+                    }
 
-                result = {
-                    'timestamp': time.strftime('%Y-%m-%d %H:%M:%S %Z', time.gmtime(time.time())),
-                    'bgo_path': dirname(path),
-                    'bgo_func': bgos[bgo]['name'],
-                    'runtime_ns': runtime,
-                    'status': status,
-                    **bgo_stats,
-                }
-
-                with open(results_file, 'a') as f:
-                    writer = DictWriter(f, result.keys())
-                    if os.path.getsize(results_file) == 0:
-                        writer.writeheader()
-                    writer.writerow(result)
+                    with open(results_file, 'a') as f:
+                        writer = DictWriter(f, result.keys())
+                        if os.path.getsize(results_file) == 0:
+                            writer.writeheader()
+                        writer.writerow(result)

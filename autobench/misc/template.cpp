@@ -27,6 +27,8 @@ int main(int argc, char **argv) {
     {{ init }}
     {% endfor %}
 
+    std::cout << "status,runtime_ns" << std::endl;
+
     auto start = std::chrono::steady_clock::now();
 
     status = {{ method }} (
@@ -37,8 +39,7 @@ int main(int argc, char **argv) {
 
     auto end = std::chrono::steady_clock::now();
     auto runtime_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
-    std::cout << "Runtime: " << runtime_ns << " ns" << std::endl;
-    std::cout << "Status: " << status << std::endl;
+    std::cout << status << "," << runtime_ns << std::endl;
 
     {% for free in frees %}
     {{ free }}
