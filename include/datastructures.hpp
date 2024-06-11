@@ -39,7 +39,7 @@ public:
     void init(size_t size_m, size_t size_n) {
         this->data = new T[size_m * size_n];
         this->size_m = size_m;
-        this->size_n = size_m;
+        this->size_n = size_n;
     }
 
     CMatrix(size_t size_m, size_t size_n) {
