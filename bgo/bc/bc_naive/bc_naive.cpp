@@ -55,7 +55,7 @@ int bc_naive(CMatrix<int> G, CArray<int> sources, CArray<int> *centrality) {
     
     /* Initialize the BC vector with all zeros. */
     for (size_t i = 0; i < centrality->size; i++) {
-        centrality[i] = 0;
+        centrality->data[i] = 0;
     }
 
     vprop *assp[num_sources];
