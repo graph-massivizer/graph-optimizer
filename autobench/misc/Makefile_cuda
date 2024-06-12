@@ -1,0 +1,23 @@
+CPP_COMPILER = g++ -std=c++11
+CPP_FLAGS = -O3 -march=native -Wall -Wextra
+CPP_INCLUDES = -I$(HOME)/.local/include -I../../../include
+CPP_LIBS = -llagraph -lgraphblas -lcuda -lcudart -lm -Wl,-rpath,/usr/local/cuda-11.2/lib64 -Wl,-rpath,$(HOME)/.local/lib -L$(HOME)/.local/lib
+
+CUDA_COMPILER = nvcc
+
+SOURCES = $(wildcard *.c *.cc *.cpp *.cu)
+OBJECTS = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cc,%.o,$(patsubst %.cu,%.o,$(SOURCES)))))
+
+%.o: %.cu
+	$(CUDA_COMPILER) $(CPP_INCLUDES) -c $^ -o $@
+
+%.o: %.cpp
+	$(CPP_COMPILER) $(CPP_FLAGS) $(CPP_INCLUDES) -c $^ -o $@
+
+bench: $(OBJECTS)
+	$(CPP_COMPILER) $(CPP_FLAGS) $(CPP_INCLUDES) $(CPP_LIBS) $^ -o $@
+
+clean:
+	rm -f *.o
+
+.PHONY: all clean

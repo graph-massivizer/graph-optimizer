@@ -14,12 +14,12 @@ public:
         this->size = 0;
     }
 
-    void init(size_t size) {
+    virtual void init(size_t size) {
         this->data = new T[size];
         this->size = size;
     }
 
-    void free() {
+    virtual void free() {
         delete[] this->data;
         this->data = nullptr;
         this->size = 0;

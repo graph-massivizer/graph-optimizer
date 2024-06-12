@@ -43,6 +43,11 @@ TRANSLATIONS = {
         'free': 'arg_{i}.free();',
         'name': '&arg_{i}',
     },
+    'GPU_CMatrix<int>*': {
+        'decl': 'GPU_CMatrix<int> arg_{i};',
+        'free': 'arg_{i}.free();',
+        'name': '&arg_{i}',
+    },
     'GrB_Matrix*': {
         'decl': 'GrB_Matrix arg_{i};',
         'free': 'GrB_Matrix_free(&arg_{i});',
