@@ -19,6 +19,12 @@ public:
         this->size = size;
     }
 
+    void free() {
+        delete[] this->data;
+        this->data = nullptr;
+        this->size = 0;
+    }
+
     CArray(size_t size) {
         this->init(size);
     }
@@ -36,10 +42,17 @@ public:
         this->size_n = 0;
     }
 
-    void init(size_t size_m, size_t size_n) {
+    virtual void init(size_t size_m, size_t size_n) {
         this->data = new T[size_m * size_n];
         this->size_m = size_m;
         this->size_n = size_n;
+    }
+
+    virtual void free() {
+        delete[] this->data;
+        this->data = nullptr;
+        this->size_m = 0;
+        this->size_n = 0;
     }
 
     CMatrix(size_t size_m, size_t size_n) {

@@ -22,58 +22,70 @@ TRANSLATIONS = {
     'CMatrix<int>': {
         'decl': 'CMatrix<int> arg_{i};',
         'init': 'read_graph_CMatrix(&arg_{i}, argv[{i}]);',
+        'free': 'arg_{i}.free();',
         'name': 'arg_{i}',
     },
     'GrB_Matrix': {
         'decl': 'GrB_Matrix arg_{i};',
         'init': 'read_graph_GB(&arg_{i}, argv[{i}]);',
+        'free': 'GrB_Matrix_free(&arg_{i});',
         'name': 'arg_{i}',
     },
     'LAGraph_Graph': {
         'decl': 'LAGraph_Graph arg_{i};',
         'init': 'read_graph_LA(&arg_{i}, argv[{i}]);',
+        'free': 'LAGraph_Delete(&arg_{i}, msg);',
         'name': 'arg_{i}',
     },
 
     'CMatrix<int>*': {
         'decl': 'CMatrix<int> arg_{i};',
+        'free': 'arg_{i}.free();',
         'name': '&arg_{i}',
     },
     'GrB_Matrix*': {
         'decl': 'GrB_Matrix arg_{i};',
+        'free': 'GrB_Matrix_free(&arg_{i});',
         'name': '&arg_{i}',
     },
     'LAGraph_Graph*': {
         'decl': 'LAGraph_Graph arg_{i};',
+        'free': 'LAGraph_Delete(&arg_{i}, msg);',
         'name': '&arg_{i}',
     },
 
     'CArray<int>': {
         'decl': 'CArray<int> arg_{i};',
         'init': 'read_vector_CArray(&arg_{i}, argv[{i}]);',
+        'free': 'arg_{i}.free();',
         'name': 'arg_{i}',
     },
     'CArray<GrB_Index>': {
         'decl': 'CArray<GrB_Index> arg_{i};',
         'init': 'read_vector_CArray(&arg_{i}, argv[{i}]);',
+        'free': 'arg_{i}.free();',
         'name': 'arg_{i}',
     },
     'GrB_Vector': {
         'decl': 'GrB_Vector arg_{i};',
         'init': 'read_vector_GB(&arg_{i}, argv[{i}]);',
+        'free': 'GrB_Vector_free(&arg_{i});',
         'name': 'arg_{i}',
     },
 
     'CArray<int>*': {
         'decl': 'CArray<int> arg_{i};',
+        'free': 'arg_{i}.free();',
         'name': '&arg_{i}',
     },
     'CArray<GrB_Index>*': {
         'decl': 'CArray<GrB_Index> arg_{i};',
+        'free': 'arg_{i}.free();',
         'name': '&arg_{i}',
     },
     'GrB_Vector*': {
         'decl': 'GrB_Vector arg_{i};',
+        'free': 'GrB_Vector_free(&arg_{i});',
         'name': '&arg_{i}',
     },
 
