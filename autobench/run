@@ -140,11 +140,9 @@ if __name__ == '__main__':
                     print("An error occurred!")
                 print()
                 
-                timestamp = time.strftime('%Y-%m-%d %H:%M:%S %Z', time.gmtime(time.time()))
                 reader = DictReader(StringIO(proc.stdout.decode('utf-8')))
                 for row in reader:
                     result = {
-                        'timestamp': timestamp,
                         'bgo_path': dirname(path),
                         'bgo_func': bgos[bgo]['name'],
                         **row,
