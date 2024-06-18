@@ -5,7 +5,10 @@ import utils
 import math
 
 def evaluate(model, arguments):
-    for key, value in arguments.items():
+    # sort arguments based on key length
+    sorted_arguments = sorted(arguments.items(), key=lambda item: len(item[0]), reverse=True)
+
+    for key, value in sorted_arguments:
         model = model.replace(key, str(value))
 
     return eval(model)

@@ -6,5 +6,6 @@
     "weighted": true,
     "diameter": 5000,
     "clustering_coefficient": 0.6,
-    "triangle_count": 50000
+    "triangle_count": 50000,
+    "s": 1000
 }
