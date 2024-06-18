@@ -25,6 +25,12 @@ TRANSLATIONS = {
         'free': 'arg_{i}.free();',
         'name': 'arg_{i}',
     },
+    'GPU_CMatrix<int>': {
+        'decl': 'GPU_CMatrix<int> arg_{i};',
+        'init': 'read_graph_GPU_CMatrix(&arg_{i}, argv[{i}]);',
+        'free': 'arg_{i}.free();',
+        'name': 'arg_{i}',
+    },
     'GrB_Matrix': {
         'decl': 'GrB_Matrix arg_{i};',
         'init': 'read_graph_GB(&arg_{i}, argv[{i}]);',
@@ -71,6 +77,12 @@ TRANSLATIONS = {
         'free': 'arg_{i}.free();',
         'name': 'arg_{i}',
     },
+    'GPU_CArray<int>': {
+        'decl': 'GPU_CArray<int> arg_{i};',
+        'init': 'read_graph_GPU_CArray(&arg_{i}, argv[{i}]);',
+        'free': 'arg_{i}.free();',
+        'name': 'arg_{i}',
+    },
     'GrB_Vector': {
         'decl': 'GrB_Vector arg_{i};',
         'init': 'read_vector_GB(&arg_{i}, argv[{i}]);',
@@ -80,6 +92,11 @@ TRANSLATIONS = {
 
     'CArray<int>*': {
         'decl': 'CArray<int> arg_{i};',
+        'free': 'arg_{i}.free();',
+        'name': '&arg_{i}',
+    },
+    'GPU_CArray<int>*': {
+        'decl': 'GPU_CArray<int> arg_{i};',
         'free': 'arg_{i}.free();',
         'name': '&arg_{i}',
     },
@@ -95,7 +112,7 @@ TRANSLATIONS = {
     },
 
     'int': {
-        'decl': 'int arg_{i} = arg_{i} = (GrB_Index) atoi(argv[{i}]);',
+        'decl': 'int arg_{i} = (int) atoi(argv[{i}]);',
         'name': 'arg_{i}',
     },
     'GrB_Index': {
