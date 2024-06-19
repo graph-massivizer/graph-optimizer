@@ -48,7 +48,15 @@ def generate_code(bgo):
 
 
 def generate_case(abs_bgo, data):
-    args, stats, refs = [], {}, {}
+    args, stats = [], {}
+    refs = {
+        'G': { # This default value is needed for BGO's without graph inputs.
+            'SIZE_VERTS': data['size_verts'],
+            'SIZE_EDGES': data['size_edges'],
+            'PATH': data['path'],
+        }
+    }
+
     for arg in abs_bgo['in_args']:
         if arg['kind'] == 'GRAPH':
             args.append(data['path'])
