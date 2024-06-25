@@ -99,7 +99,6 @@ def generate_case(bgo_config, data):
 def parse_arg_list(arg):
     """Parse arguments in a `key=value1,value2,value3` format."""
     key, value = arg.split('=')
-    print(key, value)
     filepaths = []
     for fp in value.split(','):
         if '*' in fp or '?' in fp:
@@ -120,11 +119,15 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('bgos', nargs='+', type=abspath)
     parser.add_argument('--seed', type=int, default=None)
-    parser.add_argument('--num', type=int, default=10)
-    parser.add_argument('--runs', type=int, default=10)
+    parser.add_argument('--num', type=int, default=1)
+    parser.add_argument('--runs', type=int, default=1)
     parser.add_argument('--data', nargs='+', type=parse_arg_list)
+    out_arg = parser.add_argument('--output', type=abspath, default=None)
 
     args = parser.parse_args()
+
+    if args.output and len(args.bgos) > 1:
+        parser.error("Cannot output to specific file when benchmarking multiple BGO's!")
 
     random.seed(args.seed)
 
@@ -139,7 +142,11 @@ if __name__ == '__main__':
 
     for bgo_path in args.bgos:
         run('make bench'.split(' '), cwd=bgo_path)
-        results_file = join(bgo_path, f'../results_{timestamp}.csv')
+
+        if args.output:
+            results_file = args.output
+        else:
+            results_file = join(bgo_path, f'../results_{timestamp}.csv')
 
         with open(join(bgo_path, '../config.json'), 'r') as f:
             bgo_config = json.load(f)
