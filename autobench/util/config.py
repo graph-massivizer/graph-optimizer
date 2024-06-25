@@ -108,7 +108,7 @@ TRANSLATIONS = {
     },
     'GrB_Vector*': {
         'decl': 'GrB_Vector arg_{i};',
-        'save': '// Save not implemented for \'GrB_Vector*\'',
+        'save': 'write_vector_GB(arg_{i}, argv[{i}]);',
         'free': 'GrB_Vector_free(&arg_{i});',
         'name': '&arg_{i}',
     },

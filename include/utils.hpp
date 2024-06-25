@@ -6,6 +6,7 @@
 #include <vector>
 #include <iostream>
 #include <cstring>
+#include <cassert>
 
 #include "datastructures.hpp"
 
@@ -66,6 +67,7 @@ void write_graph_GB(GrB_Matrix M, char *filename) {
     FILE *fd = fopen(filename, "w");
     char msg[LAGRAPH_MSG_LEN];
 
+    // NOTE: This output is garbage when matrix is dense!
     if (GrB_SUCCESS != LAGraph_MMWrite(M, fd, NULL, msg)) {
         fprintf(stderr, "ERROR: Failed to save graph: %s\n", filename);
         exit(-1);
@@ -161,6 +163,49 @@ void write_vector_CArray(CArray<T> V, char *filename) {
     M.init(1, V.size);
     std::memcpy(M.data, V.data, V.size * sizeof(T));
     write_graph_CMatrix(M, filename);
+}
+
+void read_vector_GB(GrB_Vector *V, char *filename) {
+    GrB_Matrix M;
+    read_graph_GB(&M, filename);
+
+    GrB_Index nrows, ncols, nvals;
+    GrB_Matrix_nrows(&nrows, M);
+    GrB_Matrix_ncols(&ncols, M);
+    GrB_Matrix_nvals(&nvals, M);
+    assert(nrows == 1 && ncols > 0);
+    GrB_Vector_new(V, GrB_INT32, ncols);
+
+    GrB_Index row_indices[nvals];
+    GrB_Index col_indices[nvals];
+    int values[nvals];
+    GrB_Matrix_extractTuples_INT32(row_indices, col_indices, values, &nvals, M);
+
+    for (GrB_Index i = 0; i < nvals; i++) {
+        GrB_Vector_setElement_INT32(*V, values[i], col_indices[i]);
+    }
+
+    GrB_Matrix_free(&M);
+}
+
+void write_vector_GB(GrB_Vector V, char *filename) {
+    GrB_Index size;
+    GrB_Vector_size(&size, V);
+
+    GrB_Matrix M;
+    GrB_Matrix_new(&M, GrB_INT32, 1, size);
+
+    GrB_Index indices[size];
+    int values[size];
+    GrB_Vector_extractTuples_INT32(indices, values, &size, V);
+
+    for (GrB_Index i = 0; i < size; i++) {
+        if (values[i] == 0) { continue; }
+        GrB_Matrix_setElement_INT32(M, values[i], 0, indices[i]);
+    }
+
+    write_graph_GB(M, filename);
+    GrB_Matrix_free(&M);
 }
 
 /*
