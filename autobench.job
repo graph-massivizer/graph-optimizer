@@ -7,4 +7,4 @@
 . env/bin/activate
 module load cuda12.3/toolkit
 
-autobench/run
+python autobench/run_bench.py bgo/bfs/bfs_gpu --num 1 --runs 1 --data G=data/random/random_373_14390.mtx
