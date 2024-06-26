@@ -3,7 +3,7 @@ PYTHON          = /usr/bin/env python
 CPP_COMPILER    = g++ -std=c++11 -g
 CPP_FLAGS       = -O3 -march=native -Wall -Wextra
 CPP_INCLUDES    = -I$(HOME)/.local/include -I../../../include
-CPP_LIBS        = -llagraph -lgraphblas -lcuda -lcudart -lm -Wl,-rpath,/usr/local/cuda-11.2/lib64 -Wl,-rpath,$(HOME)/.local/lib -L$(HOME)/.local/lib
+CPP_LIBS        = -llagraph -lgraphblas -lcuda -lcudart -lm -Wl,-rpath,/usr/local/cuda-11.2/lib64 -Wl,-rpath,$(HOME)/.local/lib64 -L$(HOME)/.local/lib64
 
 CUDA_COMPILER   = nvcc
 

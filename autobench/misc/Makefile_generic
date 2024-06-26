@@ -3,7 +3,7 @@ PYTHON          = /usr/bin/env python
 CPP_COMPILER    = g++ -std=c++11
 CPP_FLAGS       = -O3 -march=native -Wall -Wextra -fPIC
 CPP_INCLUDES    = -I$(HOME)/.local/include -I../../../include
-CPP_LIBS        = -llagraph -lgraphblas -lm -Wl,-rpath,$(HOME)/.local/lib -L$(HOME)/.local/lib
+CPP_LIBS        = -llagraph -lgraphblas -lm -Wl,-rpath,$(HOME)/.local/lib64 -L$(HOME)/.local/lib64
 
 HEADER  = $(notdir $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))).hpp
 SOURCES = $(filter-out bench.cpp, $(wildcard *.c *.cpp))
