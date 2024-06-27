@@ -155,11 +155,11 @@ if __name__ == '__main__':
             cur_data = { k: v[i] for k, v in data.items() }
             for _ in range(args.num):
                 bgo_args, bgo_stats = generate_case(bgo_config, cur_data)
-                for i, arg in enumerate(bgo_args):
+                for j, arg in enumerate(bgo_args):
                     if type(arg) is list:
-                        list_path = join(TEMP_DIR, f'arg{i}.mtx')
+                        list_path = join(TEMP_DIR, f'arg{j}.mtx')
                         mmwrite(list_path, [arg])
-                        bgo_args[i] = list_path
+                        bgo_args[j] = list_path
 
                 bgo_args = [str(arg) for arg in bgo_args] + [str(args.runs)]
                 print(f"Running case\n"
@@ -174,6 +174,7 @@ if __name__ == '__main__':
                 for row in reader:
                     result = {
                         'bgo_path': relpath(bgo_path, BASE_DIR),
+                        'case': i,
                         **row,
                         **bgo_stats,
                     }
