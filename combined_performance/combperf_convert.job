@@ -4,5 +4,4 @@
 
 . ../env/bin/activate
 
-python run_experiment_simple.py
 python run_experiment_convert.py

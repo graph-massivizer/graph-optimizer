@@ -22,29 +22,29 @@ random.seed(args.seed)
 if not args.testfile:
     # Just use the first file and split it up into a training and test data.
     df = pd.read_csv(args.trainfile)
-    
+
     # Randomly select files for the training and test set.
-    filenames = df['G_in.PATH'].unique()
+    filenames = df['G.PATH'].unique()
     random.shuffle(filenames)
     filenames_t = filenames[:int(len(filenames)*args.split)]
     filenames_s = filenames[int(len(filenames)*args.split):]
 
     # Prepare the training and test sets without filtering out any data.
-    data_ct = df[df['G_in.PATH'].isin(filenames_t)]
-    data_cs = df[df['G_in.PATH'].isin(filenames_s)]
+    data_ct = df[df['G.PATH'].isin(filenames_t)]
+    data_cs = df[df['G.PATH'].isin(filenames_s)]
 else:
     data_ct = pd.read_csv(args.trainfile)
     data_cs = pd.read_csv(args.testfile)
 
 # Prepare filtered sets by removing the 3 highest and 3 lowest obtained runtimes from each file.
 remove_extremes = lambda group : group.sort_values('runtime_ns').iloc[3:-3].sort_values('run')
-data_ft = data_ct.groupby('G_in.PATH').apply(remove_extremes).reset_index(drop=True)
-data_fs = data_cs.groupby('G_in.PATH').apply(remove_extremes).reset_index(drop=True)
+data_ft = data_ct.groupby('G.PATH').apply(remove_extremes).reset_index(drop=True)
+data_fs = data_cs.groupby('G.PATH').apply(remove_extremes).reset_index(drop=True)
 
 
 def prepare(df):
     # Prepare the matrix A and vector b using the data from the Pandas dataframe.
-    data = df[['G_in.SIZE_VERTS', 'G_in.SIZE_EDGES', 'runtime_ns']].to_numpy()
+    data = df[['G.SIZE_VERTS', 'G.SIZE_EDGES', 'runtime_ns']].to_numpy()
     A = np.column_stack((data[:, 0]**2, data[:, 1], np.ones(len(data))))
     b = data[:, 2]
     return A, b
@@ -58,6 +58,9 @@ A_fs, b_fs = prepare(data_fs)
 # Calibrate the model using least squares, AKA find the optimal x.
 x_c, _, _, _ = np.linalg.lstsq(A_ct, b_ct, rcond=None)
 x_f, _, _, _ = np.linalg.lstsq(A_ft, b_ft, rcond=None)
+
+print(f"coef x (complete) : [{', '.join([f'{x}' for x in x_c])}]")
+print(f"coef x (filtered) : [{', '.join([f'{x}' for x in x_f])}]")
 
 # Calculate the predicted runtimes using the calibrated model.
 b_ctp = np.dot(A_ct, x_c)

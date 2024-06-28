@@ -1,5 +1,6 @@
 data/
-results/
 
 code/*/bench
 code/*/bench.cpp
+
+*.png

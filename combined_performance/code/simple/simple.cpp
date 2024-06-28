@@ -1,6 +1,8 @@
 #include "GraphBLAS.h"
 #include "LAGraph.h"
 
+#include "datastructures.hpp"
+
 #include "../../../bgo/bc/bc_lagr/bc_lagr.hpp"
 #include "../../../bgo/find_max/find_max_gb/find_max_gb.hpp"
 #include "../../../bgo/bfs/bfs_lagr/bfs_lagr.hpp"
