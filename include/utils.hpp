@@ -1,10 +1,12 @@
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef UTILS_HPP
+#define UTILS_HPP
 
 #include "GraphBLAS.h"
 #include "LAGraph.h"
 #include <vector>
 #include <iostream>
+#include <cstring>
+#include <cassert>
 
 #include "datastructures.hpp"
 
@@ -61,11 +63,30 @@ void read_graph_GB(GrB_Matrix *M, char *fileName) {
         fclose(fd);
 }
 
+void write_graph_GB(GrB_Matrix M, char *filename) {
+    FILE *fd = fopen(filename, "w");
+    char msg[LAGRAPH_MSG_LEN];
+
+    // NOTE: This output is garbage when matrix is dense!
+    if (GrB_SUCCESS != LAGraph_MMWrite(M, fd, NULL, msg)) {
+        fprintf(stderr, "ERROR: Failed to save graph: %s\n", filename);
+        exit(-1);
+    }
+
+    if (fd != NULL) {
+        fclose(fd);
+    }
+}
+
 void read_graph_LA(LAGraph_Graph *G, char *filename) {
     char msg[LAGRAPH_MSG_LEN];
     GrB_Matrix M;
     read_graph_GB(&M, filename);
     LAGraph_New(G, &M, LAGraph_ADJACENCY_DIRECTED, msg);
+}
+
+void write_graph_LA(LAGraph_Graph G, char *filename) {
+    write_graph_GB(G->A, filename);
 }
 
 template <typename T>
@@ -91,6 +112,30 @@ void read_graph_CMatrix(CMatrix<T> *G, char* filename) {
 }
 
 template <typename T>
+void write_graph_CMatrix(CMatrix<T> G, char* filename) {
+    GrB_Matrix M;
+    if (GrB_SUCCESS != GrB_Matrix_new(&M, GrB_FP32, G.size_m, G.size_n)) {
+        std::cerr << "Failed to create matrix!" << std::endl;
+        exit(-1);
+    }
+
+    for (size_t y = 0; y < G.size_m; y++) {
+        for (size_t x = 0; x < G.size_n; x++) {
+            T value = G.data[y * G.size_n + y];
+            if (value == 0.0) { continue; }
+
+            if (GrB_SUCCESS != GrB_Matrix_setElement_FP64(M, value, y, x)) {
+                std::cerr << "Failed to set matrix element at (" << x << ", " << y << ")" << std::endl;
+                exit(-1);
+            }
+        }
+    }
+
+    write_graph_GB(M, filename);
+    GrB_Matrix_free(&M);
+}
+
+template <typename T>
 void read_vector_CArray(CArray<T> *V, char* filename) {
     GrB_Matrix M;
     read_graph_GB(&M, filename);
@@ -110,6 +155,57 @@ void read_vector_CArray(CArray<T> *V, char* filename) {
     for (GrB_Index i = 0; i < nvals; i++) {
         V->data[col_indices[i]] = (T) values[i];
     }
+}
+
+template <typename T>
+void write_vector_CArray(CArray<T> V, char *filename) {
+    CMatrix<T> M;
+    M.init(1, V.size);
+    std::memcpy(M.data, V.data, V.size * sizeof(T));
+    write_graph_CMatrix(M, filename);
+}
+
+void read_vector_GB(GrB_Vector *V, char *filename) {
+    GrB_Matrix M;
+    read_graph_GB(&M, filename);
+
+    GrB_Index nrows, ncols, nvals;
+    GrB_Matrix_nrows(&nrows, M);
+    GrB_Matrix_ncols(&ncols, M);
+    GrB_Matrix_nvals(&nvals, M);
+    assert(nrows == 1 && ncols > 0);
+    GrB_Vector_new(V, GrB_INT32, ncols);
+
+    GrB_Index row_indices[nvals];
+    GrB_Index col_indices[nvals];
+    int values[nvals];
+    GrB_Matrix_extractTuples_INT32(row_indices, col_indices, values, &nvals, M);
+
+    for (GrB_Index i = 0; i < nvals; i++) {
+        GrB_Vector_setElement_INT32(*V, values[i], col_indices[i]);
+    }
+
+    GrB_Matrix_free(&M);
+}
+
+void write_vector_GB(GrB_Vector V, char *filename) {
+    GrB_Index size;
+    GrB_Vector_size(&size, V);
+
+    GrB_Matrix M;
+    GrB_Matrix_new(&M, GrB_INT32, 1, size);
+
+    GrB_Index indices[size];
+    int values[size];
+    GrB_Vector_extractTuples_INT32(indices, values, &size, V);
+
+    for (GrB_Index i = 0; i < size; i++) {
+        if (values[i] == 0) { continue; }
+        GrB_Matrix_setElement_INT32(M, values[i], 0, indices[i]);
+    }
+
+    write_graph_GB(M, filename);
+    GrB_Matrix_free(&M);
 }
 
 /*

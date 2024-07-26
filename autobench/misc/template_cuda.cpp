@@ -4,7 +4,7 @@
 #include "GraphBLAS.h"
 #include "LAGraph.h"
 
-#include "utils.hpp"
+#include "gpu_utils.hpp"
 
 #include "{{ header }}"
 

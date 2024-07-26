@@ -4,6 +4,8 @@ Autobench can be used to automatically generate benchmarking code and gather per
 
 The autobench infrastructure expects that BGO's (in the `bgo` directory) are implemented in a two layer structure. At the highest level, an abstract description of the BGO's is formulated in the `config.json` files. Each subdirectory then contains an actual implementation of the BGO.
 
+The benchmarking code can ben generated based on a bgo header file with a single function definition. The `config.json` file, in the parent directory, is used to generate cases to benchmark.
+
 ## Usage Instructions
 
 ### Add a new abstract BGO
@@ -32,7 +34,7 @@ First, create a new directory in the `bgo` directory. Preferably named after the
 The arguments must be supplied in-order. Output arguments always come after the input arguments. For a list of accepted argument kinds and values, see the appendix below.
 
 ### Add a new implemented BGO
-Based on the abstract description of a BGO, you can add multiple implementations. Each implementation is contained a seperate subdirectory. This subdirectory must contain a `.cpp` and `.hpp` file, as well as a Makefile. The `.hpp` file must contain one function definition that alligns with the abstract BGO description. See the example below:
+Based on the abstract description of a BGO, you can add multiple implementations. Each implementation is contained a seperate subdirectory. This subdirectory must contain a Makefile with the option `bench` and a `.hpp` file with the same name as the subdirectory. The `.hpp` file must contain a single function definition that alligns with the abstract BGO description. See the example below:
 ```C++
 int bc_lagr(LAGraph_Graph G, CArray<GrB_Index> sources, GrB_Vector *centrality);
 ```
@@ -42,19 +44,19 @@ A generic makefile can be found at `autobench/misc/Makefile_generic`. You can cr
 ```sh
 ln -s ../../../autobench/misc/Makefile_generic Makefile
 ```
+There is also a generic makefile for CUDA code at `autobench/misc/Makefile_cuda`.
+
+You are free to create your own custom Makefile and template for the benchmark code.
 
 ### Configure & run the benchmark
-To run the benchmark, a populated `config.json` file is required in the root directory. You can create it by running `autobench/configure`.
-
-You can run a benchmark using `autobench/run`. You may also use one of the options like:
+You can run a benchmark using `python autobench/run_bench.py <bgo paths...>`. You may also use one of the options like:
 - `--num N` : to specify the number of randomly generated inputs per graph/BGO pair.
 - `--runs N` : to specify the number of runs to perform with the same input.
-- `--data PATH` : to specify one or multiple graphs.
-- `--bgos NAME` : to specify one or multiple BGO implementations.
+- `--data key1=value11 key2=value21,value22` : to pin some of the input data and optionally set output files. Always include atleast one value for `G`.
 
 Example:
 ```sh
-autobench/run --num 1 --data data/RO_edges.mtx --bgos bc_lagr
+python autobench/run_bench.py bgo/bc/bc_lagr --num 1 --runs 4 --data G=data/RO_edges.mtx
 ```
 
 ### Appendix: Example slurm job
@@ -68,7 +70,7 @@ Example `autobench.job` file:
 
 . env/bin/activate
 
-autobench/run --num 1 --data data/RO_edges.mtx
+python autobench/run_bench.py bgo/bc/bc_lagr --num 1 --runs 4 --data G=data/RO_edges.mtx
 ```
 You can run the job using `sbatch autobench.job`.
 
@@ -78,6 +80,7 @@ You can run the job using `sbatch autobench.job`.
 - `GRAPH`
     - Implementations:
         - `CMatrix<int>`
+        - `GPU_CMatrix<int>`
         - `GrB_Matrix`
         - `LAGraph_Graph`
     - Statistics:
@@ -87,6 +90,7 @@ You can run the job using `sbatch autobench.job`.
     - Implementations:
         - `CArray<int>`
         - `CArray<GrB_Index>`
+        - `GPU_CArray<int>`
         - `GrB_Vector`
     - Values
         - `GRAPH.RAND_VERT_VECTOR`

@@ -1,0 +1,6 @@
+data/
+
+code/*/bench
+code/*/bench.cpp
+
+*.png

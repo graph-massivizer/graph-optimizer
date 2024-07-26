@@ -4,4 +4,4 @@
 
 . env/bin/activate
 
-autobench/run --num 10 --bgos GrB2CM --data data/random/*.mtx
+python autobench/run_bench.py bgo/convert/convert --num 10 --data G=data/random/*.mtx

@@ -1,12 +1,20 @@
-CPP_COMPILER = g++ -std=c++11
-CPP_FLAGS = -O3 -march=native -Wall -Wextra
-CPP_INCLUDES = -I$(HOME)/.local/include -I../../../include
-CPP_LIBS = -llagraph -lgraphblas -lcuda -lcudart -lm -Wl,-rpath,/usr/local/cuda-11.2/lib64 -Wl,-rpath,$(HOME)/.local/lib -L$(HOME)/.local/lib
+PYTHON          = /usr/bin/env python
 
-CUDA_COMPILER = nvcc
+CPP_COMPILER    = g++ -std=c++11 -g
+CPP_FLAGS       = -O3 -march=native -Wall -Wextra
+CPP_INCLUDES    = -I$(HOME)/.local/include -I../../../include
+CPP_LIBS        = -llagraph -lgraphblas -lcuda -lcudart -lm -Wl,-rpath,/usr/local/cuda-11.2/lib64 -Wl,-rpath,$(HOME)/.local/lib64 -L$(HOME)/.local/lib64
 
-SOURCES = $(wildcard *.c *.cc *.cpp *.cu)
+CUDA_COMPILER   = nvcc
+
+HEADER  = $(notdir $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))).hpp
+SOURCES = $(filter-out bench.cpp, $(wildcard *.c *.cpp *.cu))
 OBJECTS = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cc,%.o,$(patsubst %.cu,%.o,$(SOURCES)))))
+
+all: bench
+
+bench.cpp: $(HEADER)
+	$(PYTHON) ../../../autobench/gen_bench_code.py $@ $^ '$(CPP_INCLUDES)' --template ../../../autobench/misc/template_cuda.cpp
 
 %.o: %.cu
 	$(CUDA_COMPILER) $(CPP_INCLUDES) -c $^ -o $@
@@ -14,10 +22,10 @@ OBJECTS = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(patsubst %.cc,%.o,$(patsubst
 %.o: %.cpp
 	$(CPP_COMPILER) $(CPP_FLAGS) $(CPP_INCLUDES) -c $^ -o $@
 
-bench: $(OBJECTS)
+bench: bench.cpp $(OBJECTS)
 	$(CPP_COMPILER) $(CPP_FLAGS) $(CPP_INCLUDES) $(CPP_LIBS) $^ -o $@
 
 clean:
-	rm -f *.o
+	rm -f bench bench.cpp *.o
 
 .PHONY: all clean

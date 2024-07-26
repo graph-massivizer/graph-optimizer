@@ -8,7 +8,7 @@ CPP_LIBS        = -llagraph -lgraphblas -lm -Wl,-rpath,$(HOME)/.local/lib64 -L$(
 HEADER  = $(notdir $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))).hpp
 SOURCES = $(filter-out bench.cpp, $(wildcard *.c *.cpp))
 OBJECTS = $(patsubst %.c,%.o,$(patsubst %.cpp,%.o,$(SOURCES)))
-
+ADDITIONAL_OBJECTS = ../../../bgo/bc/bc_lagr/bc_lagr.o ../../../bgo/find_max/find_max_gb/find_max_gb.o ../../../bgo/bfs/bfs_lagr/bfs_lagr.o
 
 all: bench
 
@@ -19,7 +19,7 @@ bench.cpp: $(HEADER)
 	$(CPP_COMPILER) $(CPP_FLAGS) -c $(CPP_INCLUDES) $< -o $@
 
 bench: bench.cpp $(OBJECTS)
-	$(CPP_COMPILER) $(CPP_FLAGS) $(CPP_INCLUDES) $(CPP_LIBS) $^ -o $@
+	$(CPP_COMPILER) $(CPP_FLAGS) $(CPP_INCLUDES) $(CPP_LIBS) $^ -o $@ $(ADDITIONAL_OBJECTS)
 
 clean:
 	rm -f bench bench.cpp *.o
