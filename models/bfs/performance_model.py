@@ -7,10 +7,9 @@ symbolical_model_parameters = ["T_q_front", "T_q_pop", "T_q_push", "T_int_add", 
 def symbolic_model(T_q_front, T_q_pop, T_q_push, T_int_add, cache_linesizes, mem_access_times, int_size, float_size):
     miss_rates = [1 / (linesize/int_size) for linesize in cache_linesizes]
     G_miss_rates = [1 / (linesize/float_size) for linesize in cache_linesizes]
-    T_mem_write = utils.avg_mem_access_time(miss_rates, mem_access_times)
-    T_mem_read = T_mem_write
+    T_mem_read = utils.avg_mem_access_time(miss_rates, mem_access_times)
     T_G_mem_read = utils.avg_mem_access_time(G_miss_rates, mem_access_times)
-    T_init = f"2*{T_mem_write}"
+    T_init = f"2*{T_mem_read}"
     T_while_loop = f"{T_q_front + T_q_pop}+n*{T_int_add + T_G_mem_read + T_mem_read}"
     T_visit_node = 2*mem_access_times[-1] + mem_access_times[0] + T_int_add + T_q_push
     T_bfs = f"(n*{T_init}+n*({T_while_loop})+n*({T_visit_node})) / 1000000"

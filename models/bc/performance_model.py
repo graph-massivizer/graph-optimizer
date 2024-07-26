@@ -4,15 +4,12 @@ symbolical_model_parameters = ["T_heap_insert_max", "T_int_add", "T_malloc_n", "
 
 def symbolic_model(T_heap_insert_max, T_int_add, T_heap_extract_min, T_heap_decrease_key, cache_linesizes, mem_access_times, bool_size, int_size, float_size):
     T_float_mem_read = utils.avg_mem_access_time([1/(linesize/float_size) for linesize in cache_linesizes], mem_access_times)
-    T_float_mem_write = T_float_mem_read
     T_vprop_mem_read = utils.avg_mem_access_time([1/(linesize/(2*int_size)) for linesize in cache_linesizes], mem_access_times)
-    T_vprop_mem_write = T_vprop_mem_read
     T_bool_mem_read =utils.avg_mem_access_time([1/(linesize/bool_size) for linesize in cache_linesizes], mem_access_times)
-    T_bool_mem_write = T_bool_mem_read
     T_heap_init = f'n*({T_heap_insert_max})'
-    T_dijkstra = f'{T_heap_init} + n*({T_vprop_mem_write + T_bool_mem_write}) + n*({T_heap_extract_min + mem_access_times[-1]} + n*({T_int_add + T_bool_mem_read + T_float_mem_read + T_vprop_mem_read + mem_access_times[-1] + T_float_mem_read + 4*mem_access_times[0] + T_heap_decrease_key}))'
+    T_dijkstra = f'{T_heap_init} + n*({T_vprop_mem_read + T_bool_mem_read}) + n*({T_heap_extract_min + mem_access_times[-1]} + n*({T_int_add + T_bool_mem_read + T_float_mem_read + T_vprop_mem_read + mem_access_times[-1] + T_float_mem_read + 4*mem_access_times[0] + T_heap_decrease_key}))'
     T_inner_loop = f'{2*T_vprop_mem_read} + n*({T_int_add + 2*mem_access_times[0] + T_vprop_mem_read + mem_access_times[-1]})'
-    T_bc = f'(n*{T_float_mem_write} + s*({T_dijkstra} + {T_vprop_mem_write}) + s*(s-1)*({T_inner_loop})) / 1000000'
+    T_bc = f'(n*{T_float_mem_read} + s*({T_dijkstra} + {T_vprop_mem_read}) + s*(s-1)*({T_inner_loop})) / 1000000'
 
     return T_bc
 
