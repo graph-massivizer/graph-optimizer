@@ -5,7 +5,7 @@ symbolical_model_parameters = ["T_float_gt", "T_int_add", "cache_linesizes", "me
 def symbolic_model(T_float_gt, T_int_add, cache_linesizes, mem_access_times, int_size):
     miss_rates = [1 / (linesize/int_size) for linesize in cache_linesizes]
     T_mem_read = utils.avg_mem_access_time(miss_rates, mem_access_times)
-    T_find_max = f"n*({T_mem_read + T_float_gt + mem_access_times[0] + T_int_add})"
+    T_find_max = f"n*({T_mem_read + T_float_gt + mem_access_times[0] + T_int_add}) / 1000000"
 
     return T_find_max
 
