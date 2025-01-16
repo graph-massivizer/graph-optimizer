@@ -27,6 +27,47 @@ int int_add() {
     return a;
 }
 
+int int_mult() {
+    register int a = 0;
+
+    struct timespec before, after;
+    clock_gettime(CLOCK_MONOTONIC, &before);
+
+    for (register int i = 0; i < 100000; i++) {
+        REPEAT_10000(a=i*7;)
+    }
+
+    clock_gettime(CLOCK_MONOTONIC, &after);
+    double time = (double)(after.tv_sec - before.tv_sec) +
+              (double)(after.tv_nsec - before.tv_nsec) * 1e-9;
+    printf("T_int_mult:%.6e\n", time);
+    return a;
+}
+
+bool int_gt() {
+    // Initialize a random array of ints
+    int a[1000000];
+    register bool b;
+    register int val;
+    for (int i = 0; i < 1000000; i++) {
+        a[i] = rand();
+    }
+
+    struct timespec before, after;
+    clock_gettime(CLOCK_MONOTONIC, &before);
+
+    for (register int i = 0; i < 100000; i++) {
+        REPEAT_10000(b = 0.1 > 0.5;)
+    }
+
+    clock_gettime(CLOCK_MONOTONIC, &after);
+    double time = (double)(after.tv_sec - before.tv_sec) +
+              (double)(after.tv_nsec - before.tv_nsec) * 1e-9;
+    printf("T_int_gt:%.6e\n", time);
+
+    return b;
+}
+
 bool int_neq() {
     register int a = 0;
     register bool b;
@@ -45,6 +86,74 @@ bool int_neq() {
     return b;
 }
 
+float float_add() {
+    register float a = 0;
+
+    struct timespec before, after;
+    clock_gettime(CLOCK_MONOTONIC, &before);
+
+    for (register int i = 0; i < 100000; i++) {
+        REPEAT_10000(a = i + 3.9;)
+    }
+
+    clock_gettime(CLOCK_MONOTONIC, &after);
+    double time = (double)(after.tv_sec - before.tv_sec) +
+              (double)(after.tv_nsec - before.tv_nsec) * 1e-9;
+    printf("T_float_add:%.6e\n", time);
+    return a;
+}
+
+float float_sub() {
+    register float a = 0;
+
+    struct timespec before, after;
+    clock_gettime(CLOCK_MONOTONIC, &before);
+
+    for (register int i = 0; i < 100000; i++) {
+        REPEAT_10000(a = i - 3.9;)
+    }
+
+    clock_gettime(CLOCK_MONOTONIC, &after);
+    double time = (double)(after.tv_sec - before.tv_sec) +
+              (double)(after.tv_nsec - before.tv_nsec) * 1e-9;
+    printf("T_float_sub:%.6e\n", time);
+    return a;
+}
+
+float float_mult() {
+    register float a = 0.1;
+
+    struct timespec before, after;
+    clock_gettime(CLOCK_MONOTONIC, &before);
+
+    for (register int i = 0; i < 100000; i++) {
+        REPEAT_10000(a=i*7.1;)
+    }
+
+    clock_gettime(CLOCK_MONOTONIC, &after);
+    double time = (double)(after.tv_sec - before.tv_sec) +
+              (double)(after.tv_nsec - before.tv_nsec) * 1e-9;
+    printf("T_float_mult:%.6e\n", time);
+    return a;
+}
+
+float float_div() {
+    register float a = 0.1;
+
+    struct timespec before, after;
+    clock_gettime(CLOCK_MONOTONIC, &before);
+
+    for (register int i = 0; i < 100000; i++) {
+        REPEAT_10000(a=i/7.1;)
+    }
+
+    clock_gettime(CLOCK_MONOTONIC, &after);
+    double time = (double)(after.tv_sec - before.tv_sec) +
+              (double)(after.tv_nsec - before.tv_nsec) * 1e-9;
+    printf("T_float_div:%.6e\n", time);
+    return a;
+}
+
 bool float_gt() {
     // Initialize a random array of floats
     float a[1000000];
@@ -57,8 +166,8 @@ bool float_gt() {
     struct timespec before, after;
     clock_gettime(CLOCK_MONOTONIC, &before);
 
-    for (register int i = 0; i < 1000000; i++) {
-        REPEAT_1000(b = 0.1 > 0.5;)
+    for (register int i = 0; i < 100000; i++) {
+        REPEAT_10000(b = 0.1 > 0.5;)
     }
 
     clock_gettime(CLOCK_MONOTONIC, &after);
@@ -167,6 +276,13 @@ int vector_ops() {
 
 int main() {
     int_add();
+    int_mult();
+    int_gt();
+    int_neq();
+    float_add();
+    float_sub();
+    float_mult();
+    float_div();
     float_gt();
     queue_ops();
     binary_heap();

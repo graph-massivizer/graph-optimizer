@@ -44,6 +44,9 @@ public:
 
     virtual void init(size_t size_m, size_t size_n) {
         this->data = new T[size_m * size_n];
+        for (size_t i = 0; i < size_m * size_n; i++) {
+            this->data[i] = 0;
+        }
         this->size_m = size_m;
         this->size_n = size_n;
     }

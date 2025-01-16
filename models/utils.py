@@ -60,3 +60,6 @@ def avg_mem_access_time(miss_rates, mem_access_times):
     time += final_component*mem_access_times[-1]
 
     return time
+
+def T_malloc(n):
+    return 0

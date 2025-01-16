@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import sys
-import json
-import utils
-import math
+import os
+sys.path.insert(0, os.path.abspath(r"C:\Users\BartD\Documents\PhD\shared_VM\graph-optimizer"))
+import models.utils as utils
 
 def evaluate(model, arguments):
     # sort arguments based on key length

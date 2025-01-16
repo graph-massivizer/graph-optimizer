@@ -5,6 +5,7 @@
 #include "LAGraph.h"
 
 #include "utils.hpp"
+#include "gap/builder.h"
 
 #include "{{ header }}"
 

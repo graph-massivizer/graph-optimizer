@@ -6,7 +6,7 @@
 
 int bfs_naive(CMatrix<int> G, int source, CArray<int> *level, CArray<int> *parent) {
     const int num_nodes = G.size_m;
-    
+
     // Initialize level and parent arrays
     level->init(num_nodes);
     parent->init(num_nodes);

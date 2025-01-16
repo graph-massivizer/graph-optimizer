@@ -83,7 +83,7 @@ def generate_case(bgo_config, data):
         if arg['id'] in data:
             args.append(data[arg['id']])
         elif arg['kind'] in ['GRAPH', 'VECTOR']:
-            args.append('/dev/null')
+            args.append('output.mtx')
         else:
             args.append('NONE')
 
@@ -122,6 +122,7 @@ if __name__ == '__main__':
     parser.add_argument('--num', type=int, default=1)
     parser.add_argument('--runs', type=int, default=1)
     parser.add_argument('--data', nargs='+', type=parse_arg_list)
+    parser.add_argument('--threads', type=int, default=1)
     out_arg = parser.add_argument('--output', type=abspath, default=None)
 
     args = parser.parse_args()
@@ -133,6 +134,9 @@ if __name__ == '__main__':
 
     # Reshape the input data.
     data = { k: v for d in args.data for k, v in d.items() }
+    # if the items in data['G'] have the form "random_{val}_{the_rest}" Sort them by val
+    if 'G' in data and all([v.startswith('random_') for v in data['G']]):
+        data['G'] = sorted(data['G'], key=lambda x: int(x.split('_')[1]))
     data_len = max([len(v) for v in data.values()])
     for k, v in data.items():
         if len(v) == 1:
@@ -165,7 +169,8 @@ if __name__ == '__main__':
                 print(f"Running case\n"
                     f"    path: {bgo_path}\n"
                     f"    args: {', '.join(bgo_args)}")
-                proc = run([join(bgo_path, 'bench')] + bgo_args, stdout=PIPE)
+                proc = run([join(bgo_path, 'bench')] + bgo_args, stdout=PIPE, env={**os.environ, 'OMP_NUM_THREADS': str(args.threads)})
+                print(proc.stdout.decode('utf-8'))
                 if proc.returncode != 0:
                     print("An error occurred!")
                 print()
@@ -175,6 +180,7 @@ if __name__ == '__main__':
                     result = {
                         'bgo_path': relpath(bgo_path, BASE_DIR),
                         'case': i,
+                        'graph': basename(cur_data['G']),
                         **row,
                         **bgo_stats,
                     }

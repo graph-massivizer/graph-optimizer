@@ -56,6 +56,7 @@ void read_graph_GB(GrB_Matrix *M, char *fileName) {
     if (GrB_SUCCESS != LAGraph_MMRead(M, fd, msg))
     {
         fprintf(stderr, "ERROR: Failed to load graph: %s\n", fileName);
+        fprintf(stderr, "message: %s\n", msg);
         exit(-1);
     }
 
@@ -83,6 +84,23 @@ void read_graph_LA(LAGraph_Graph *G, char *filename) {
     GrB_Matrix M;
     read_graph_GB(&M, filename);
     LAGraph_New(G, &M, LAGraph_ADJACENCY_DIRECTED, msg);
+
+    // Set G->AT to the transpose of G->A
+    GrB_Matrix AT;
+    GrB_Descriptor desc;
+    GrB_Descriptor_new(&desc);  // Create a descriptor for transposition
+    GrB_Descriptor_set(desc, GrB_INP0, GrB_TRAN);  // Set input to transpose
+
+    // Compute the transpose of the matrix G->A
+    GrB_Matrix_dup(&AT, (*G)->A);  // Duplicate the adjacency matrix
+    GrB_transpose(AT, NULL, NULL, (*G)->A, desc);  // Perform the transpose
+    (*G)->AT = AT;
+
+    uint64_t n_triangles;
+    LAGraph_TriangleCount(&n_triangles, *G, msg);
+
+    // Clean up the descriptor
+    GrB_Descriptor_free(&desc);
 }
 
 void write_graph_LA(LAGraph_Graph G, char *filename) {
@@ -91,6 +109,11 @@ void write_graph_LA(LAGraph_Graph G, char *filename) {
 
 template <typename T>
 void read_graph_CMatrix(CMatrix<T> *G, char* filename) {
+
+}
+
+template <>
+void read_graph_CMatrix<int>(CMatrix<int> *G, char* filename) {
     GrB_Matrix M;
     read_graph_GB(&M, filename);
 
@@ -102,12 +125,34 @@ void read_graph_CMatrix(CMatrix<T> *G, char* filename) {
 
     GrB_Index row_indices[nvals];
     GrB_Index col_indices[nvals];
-    float values[nvals];
+    int values[nvals] = {0};
+    GrB_Matrix_extractTuples_INT32(row_indices, col_indices, values, &nvals, M);
+
+    G->init(nrows, nrows);
+    for (GrB_Index i = 0; i < nvals; i++) {
+        G->data[row_indices[i] * nrows + col_indices[i]] = values[i];
+    }
+}
+
+template <>
+void read_graph_CMatrix<float>(CMatrix<float> *G, char* filename) {
+    GrB_Matrix M;
+    read_graph_GB(&M, filename);
+
+    GrB_Index nrows;
+    GrB_Matrix_nrows(&nrows, M);
+
+    GrB_Index nvals;
+    GrB_Matrix_nvals(&nvals, M);
+
+    GrB_Index row_indices[nvals];
+    GrB_Index col_indices[nvals];
+    float values[nvals] = {0.0};
     GrB_Matrix_extractTuples_FP32(row_indices, col_indices, values, &nvals, M);
 
     G->init(nrows, nrows);
     for (GrB_Index i = 0; i < nvals; i++) {
-        G->data[row_indices[i] * nrows + col_indices[i]] = (T) values[i];
+        G->data[row_indices[i] * nrows + col_indices[i]] = values[i];
     }
 }
 
@@ -137,6 +182,12 @@ void write_graph_CMatrix(CMatrix<T> G, char* filename) {
 
 template <typename T>
 void read_vector_CArray(CArray<T> *V, char* filename) {
+    // This would be the generic implementation (if needed)
+}
+
+// Specialization for float
+template <>
+void read_vector_CArray<float>(CArray<float> *V, char* filename) {
     GrB_Matrix M;
     read_graph_GB(&M, filename);
 
@@ -153,7 +204,30 @@ void read_vector_CArray(CArray<T> *V, char* filename) {
 
     V->init(ncols);
     for (GrB_Index i = 0; i < nvals; i++) {
-        V->data[col_indices[i]] = (T) values[i];
+        V->data[col_indices[i]] = values[i];
+    }
+}
+
+// Specialization for int
+template <>
+void read_vector_CArray<int>(CArray<int> *V, char* filename) {
+    GrB_Matrix M;
+    read_graph_GB(&M, filename);
+
+    GrB_Index ncols;
+    GrB_Matrix_ncols(&ncols, M);
+
+    GrB_Index nvals;
+    GrB_Matrix_nvals(&nvals, M);
+
+    GrB_Index row_indices[nvals];
+    GrB_Index col_indices[nvals];
+    int values[nvals];
+    GrB_Matrix_extractTuples_INT32(row_indices, col_indices, values, &nvals, M);
+
+    V->init(ncols);
+    for (GrB_Index i = 0; i < nvals; i++) {
+        V->data[col_indices[i]] = values[i];
     }
 }
 
@@ -222,17 +296,33 @@ void read_graph_vector_array(std::vector<T> *G, char *fileName) {
 template <typename T>
 void pretty_print_vector(GrB_Vector v, int n, std::string name) {
     GrB_Index N = n;
-    std::cout << "n: " << n << std::endl;
     GrB_Index indices[n];
-    std::cout << "test3" << std::endl;
     T values[n];
-    fflush(stdout);
-    GrB_Vector_extractTuples_INT32(indices, values, &N, v);
+    GrB_Vector_extractTuples_FP32(indices, values, &N, v);
     std::cout << name.c_str() << ": [";
     for (uint i = 0; i < n - 1; i++) {
         std::cout << std::to_string(values[i]) << ", ";
     }
     std::cout << std::to_string(values[n-1]) << "]" << std::endl;
+}
+
+template <typename T>
+void pretty_print_CMatrix(CMatrix<T> M) {
+    for (size_t y = 0; y < M.size_m; y++) {
+        for (size_t x = 0; x < M.size_n; x++) {
+            std::cout << M.data[y * M.size_n + x] << " ";
+        }
+        std::cout << std::endl;
+    }
+}
+
+void pretty_print_CMatrix(CMatrix<float> M) {
+    for (size_t y = 0; y < M.size_m; y++) {
+        for (size_t x = 0; x < M.size_n; x++) {
+            std::cout << M.data[y * M.size_n + x] << " ";
+        }
+        std::cout << std::endl;
+    }
 }
 
 #endif

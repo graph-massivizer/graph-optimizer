@@ -11,9 +11,11 @@ DEFAULT_TEMPLATE_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)),
 
 
 def parse_bgo_header(headerfile, includes=''):
+    print("Header file:", headerfile)
     """Read the first (!) function definition of a header file and return the signature."""
     def traverse_ast(node):
         if str(node.location.file) == str(headerfile) and node.kind.name == 'FUNCTION_DECL':
+            print("Arguments: ", [x.type.spelling for x in node.get_arguments()])
             return {
                 'header': headerfile,
                 'method': node.spelling,
@@ -54,6 +56,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     context = parse_bgo_header(args.headerfile, args.includes)
+    print("Parsed function signature:", context)
     code = generate_bench_code(context, args.template)
 
     with open(args.sourcefile, 'w') as f:

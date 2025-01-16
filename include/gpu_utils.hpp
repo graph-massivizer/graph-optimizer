@@ -18,7 +18,7 @@ void read_graph_GPU_CMatrix(GPU_CMatrix<T> *G, char *filename) {
 template <typename T>
 void read_vector_GPU_CArray(GPU_CArray<T> *V, char* filename) {
     GPU_CArray<T> V_temp;
-    read_vector_CArray(&V_temp, filename);
+    read_vector_CArray<T>(&V_temp, filename);
 
     V->init(V_temp.size);
     cudaMemcpy(V->data, V_temp.data, V_temp.size * sizeof(T));

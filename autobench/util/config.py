@@ -44,6 +44,15 @@ TRANSLATIONS = {
         'free': 'arg_{i}.free();',
         'name': '&arg_{i}',
     },
+    'constBCGraph&': {
+        'decl': 'char* cli_args[2] = {{(char *)"-f", argv[{i}]}}; CLIterApp cli(2, cli_args, "betweenness-centrality", 1); Builder b(cli); Graph g;',
+        'init': 'g = b.MakeGraph();',
+        'name': 'g',
+    },
+    'SourcePicker<Graph>&': {
+        'init': 'SourcePicker<Graph> arg_{i}(g, cli.start_vertex());',
+        'name': 'arg_{i}',
+    },
     'GPU_CMatrix<int>*': {
         'decl': 'GPU_CMatrix<int> arg_{i};',
         'save': 'write_graph_CMatrix(arg_{i}, argv[{i}]);',
@@ -65,13 +74,19 @@ TRANSLATIONS = {
 
     'CArray<int>': {
         'decl': 'CArray<int> arg_{i};',
-        'init': 'read_vector_CArray(&arg_{i}, argv[{i}]);',
+        'init': 'read_vector_CArray<int>(&arg_{i}, argv[{i}]);',
+        'free': 'arg_{i}.free();',
+        'name': 'arg_{i}',
+    },
+    'CArray<float>': {
+        'decl': 'CArray<float> arg_{i};',
+        'init': 'read_vector_CArray<float>(&arg_{i}, argv[{i}]);',
         'free': 'arg_{i}.free();',
         'name': 'arg_{i}',
     },
     'CArray<GrB_Index>': {
         'decl': 'CArray<GrB_Index> arg_{i};',
-        'init': 'read_vector_CArray(&arg_{i}, argv[{i}]);',
+        'init': 'read_vector_CArray<int>(&arg_{i}, argv[{i}]);',
         'free': 'arg_{i}.free();',
         'name': 'arg_{i}',
     },
@@ -90,6 +105,12 @@ TRANSLATIONS = {
 
     'CArray<int>*': {
         'decl': 'CArray<int> arg_{i};',
+        'save': 'write_vector_CArray(arg_{i}, argv[{i}]);',
+        'free': 'arg_{i}.free();',
+        'name': '&arg_{i}',
+    },
+    'CArray<float>*': {
+        'decl': 'CArray<float> arg_{i};',
         'save': 'write_vector_CArray(arg_{i}, argv[{i}]);',
         'free': 'arg_{i}.free();',
         'name': '&arg_{i}',
