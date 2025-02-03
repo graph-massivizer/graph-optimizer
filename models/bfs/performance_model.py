@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import sys
 import os
-sys.path.insert(0, os.path.abspath(r"C:\Users\BartD\Documents\PhD\shared_VM\graph-optimizer"))
 import models.utils as utils
 
 symbolical_model_parameters = ["T_q_front", "T_q_pop", "T_q_push", "T_int_add", "cache_linesizes", "mem_access_times", "int_size", "float_size"]

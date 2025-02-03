@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import os
 import sys
-sys.path.insert(0, os.path.abspath(r"C:\Users\BartD\Documents\PhD\shared_VM\graph-optimizer"))
 import models.utils as utils
 
 

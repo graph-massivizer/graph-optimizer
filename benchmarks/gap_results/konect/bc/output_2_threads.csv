@@ -1,0 +1,23 @@
+bgo_path,case,graph,run,status,runtime_ns,G.SIZE_VERTS,G.SIZE_EDGES,sources.SIZE
+bgo/bc/bc_gap,0,citeseer.mtx,0,0,1352145,384413,1751463,121164
+bgo/bc/bc_gap,1,wiki_talk_pt.mtx,0,0,1772654,541355,1463308,315547
+bgo/bc/bc_gap,2,amazon0601.mtx,0,0,673125963,403394,3387388,112274
+bgo/bc/bc_gap,3,actor-collaboration.mtx,0,0,2882239517,382219,30076166,205735
+bgo/bc/bc_gap,4,ca-cit-HepPh.mtx,0,0,716319227,28093,6296894,26200
+bgo/bc/bc_gap,5,ca-cit-HepTh.mtx,0,0,376395915,22908,4889596,15815
+bgo/bc/bc_gap,6,com-youtube.mtx,0,0,1426420204,1134890,5975248,31219
+bgo/bc/bc_gap,7,digg-friends.mtx,0,0,336644865,279630,1731653,65604
+bgo/bc/bc_gap,8,dimacs10-in-2004.mtx,0,0,2130064264,1382867,27182946,356650
+bgo/bc/bc_gap,9,dimacs9-CAL.mtx,0,0,2139999133,1890815,4630444,224950
+bgo/bc/bc_gap,10,dimacs9-FLA.mtx,0,0,1171359203,1070376,2687902,136247
+bgo/bc/bc_gap,12,dimacs9-NE.mtx,0,0,1585035054,1524453,3868020,103267
+bgo/bc/bc_gap,14,flickrEdges.mtx,0,0,648535772,105938,4633896,8559
+bgo/bc/bc_gap,15,petster-dog-household.mtx,0,0,907537233,256127,42963581,1268
+bgo/bc/bc_gap,16,:bn,Couldn't find suffix of /var/scratch/dbart/data/konect/converted/:bn,,,194085,924886,187795
+bgo/bc/bc_gap,17,sx-superuser.mtx,0,0,189152843,194085,924886,166199
+bgo/bc/bc_gap,18,web-Stanford.mtx,0,0,1203086,281903,2312497,194975
+bgo/bc/bc_gap,19,wikipedia_link_be_x_old.mtx,0,0,276140951,87179,2549700,33319
+bgo/bc/bc_gap,20,wikipedia_link_cy.mtx,0,0,201149659,142648,2967435,82103
+bgo/bc/bc_gap,21,wikipedia_link_te.mtx,0,0,213972444,93596,2930023,45531
+bgo/bc/bc_gap,24,wiki_talk_nl.mtx,0,0,173566917,225749,565477,121414
+bgo/bc/bc_gap,25,wiki_talk_pl.mtx,0,0,93523292,155820,549603,118307

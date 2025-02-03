@@ -83,6 +83,7 @@ You can run the job using `sbatch autobench.job`.
         - `GPU_CMatrix<int>`
         - `GrB_Matrix`
         - `LAGraph_Graph`
+        - `BCGraph`
     - Statistics:
         - `GRAPH.SIZE_VERTS`
         - `GRAPH.SIZE_EDGES`

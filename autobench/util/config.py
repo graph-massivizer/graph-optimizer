@@ -45,7 +45,32 @@ TRANSLATIONS = {
         'name': '&arg_{i}',
     },
     'constBCGraph&': {
-        'decl': 'char* cli_args[2] = {{(char *)"-f", argv[{i}]}}; CLIterApp cli(2, cli_args, "betweenness-centrality", 1); Builder b(cli); Graph g;',
+        'decl': 'char* cli_args[3] = {{(char *)"./test", (char *)"-f", argv[1]}}; CLIterApp cli(3, cli_args, "betweenness-centrality", 1); cli.ParseArgs(); Builder b(cli); BCGraph g;',
+        'init': 'g = b.MakeGraph();',
+        'name': 'g',
+    },
+    'constBFSGraph&': {
+        'decl': 'char* cli_args[3] = {{(char *)"./test", (char *)"-f", argv[1]}}; CLApp cli(3, cli_args, "breadth-first search"); cli.ParseArgs(); Builder b(cli); BFSGraph g;',
+        'init': 'g = b.MakeGraph();',
+        'name': 'g',
+    },
+    'constCCGraph&': {
+        'decl': 'char* cli_args[3] = {{(char *)"./test", (char *)"-f", argv[1]}}; CLApp cli(3, cli_args, "connected-components-afforest"); cli.ParseArgs(); Builder b(cli); CCGraph g;',
+        'init': 'g = b.MakeGraph();',
+        'name': 'g',
+    },
+    'constPRGraph&': {
+        'decl': 'char* cli_args[3] = {{(char *)"./test", (char *)"-f", argv[1]}}; CLPageRank cli(3, cli_args, "pagerank", 1e-4, 20); cli.ParseArgs(); Builder b(cli); PRGraph g;',
+        'init': 'g = b.MakeGraph();',
+        'name': 'g',
+    },
+    'constSSSPGraph&': {
+        'decl': 'char* cli_args[3] = {{(char *)"./test", (char *)"-f", argv[1]}}; CLDelta<WeightT> cli(3, cli_args, "single-source shortest-path"); cli.ParseArgs(); WeightedBuilder b(cli); SSSPGraph g;',
+        'init': 'g = b.MakeGraph();',
+        'name': 'g',
+    },
+    'constTCGraph&': {
+        'decl': 'char* cli_args[3] = {{(char *)"./test", (char *)"-f", argv[1]}}; CLApp cli(3, cli_args, "triangle count"); cli.ParseArgs(); Builder b(cli); TCGraph g;',
         'init': 'g = b.MakeGraph();',
         'name': 'g',
     },

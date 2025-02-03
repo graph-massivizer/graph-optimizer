@@ -76,6 +76,8 @@ def generate_case(bgo_config, data):
                 args.append(data[arg['id']])
             elif val == 'RAND_VERT':
                 args.append(RAND_VERT_VECTOR(refs[src]['SIZE_VERTS'])[0])
+            elif src == 'CONST':
+                args.append(int(val))
             else:
                 exit(-1)
 
@@ -168,7 +170,8 @@ if __name__ == '__main__':
                 bgo_args = [str(arg) for arg in bgo_args] + [str(args.runs)]
                 print(f"Running case\n"
                     f"    path: {bgo_path}\n"
-                    f"    args: {', '.join(bgo_args)}")
+                    f"    args: {', '.join(bgo_args)}\n"
+                    f"    call: {[join(bgo_path, 'bench')] + bgo_args}")
                 proc = run([join(bgo_path, 'bench')] + bgo_args, stdout=PIPE, env={**os.environ, 'OMP_NUM_THREADS': str(args.threads)})
                 print(proc.stdout.decode('utf-8'))
                 if proc.returncode != 0:
@@ -190,3 +193,7 @@ if __name__ == '__main__':
                         if os.path.getsize(results_file) == 0:
                             writer.writeheader()
                         writer.writerow(result)
+
+
+
+

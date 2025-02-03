@@ -1,0 +1,21 @@
+bgo_path,case,graph,run,status,runtime_ns,G.SIZE_VERTS,G.SIZE_EDGES,sources.SIZE
+bgo/bc/bc_gap,0,citeseer.mtx,0,0,1180924,384413,1751463,283997
+bgo/bc/bc_gap,1,wiki_talk_pt.mtx,0,0,1570745,541355,1463308,385023
+bgo/bc/bc_gap,2,amazon0601.mtx,0,0,1738941834,403394,3387388,66509
+bgo/bc/bc_gap,3,actor-collaboration.mtx,0,0,7079582181,382219,30076166,372681
+bgo/bc/bc_gap,4,ca-cit-HepPh.mtx,0,0,1860602378,28093,6296894,24792
+bgo/bc/bc_gap,5,ca-cit-HepTh.mtx,0,0,1302989331,22908,4889596,19420
+bgo/bc/bc_gap,6,com-youtube.mtx,0,0,2741518162,1134890,5975248,95933
+bgo/bc/bc_gap,7,digg-friends.mtx,0,0,676042582,279630,1731653,38360
+bgo/bc/bc_gap,9,dimacs9-CAL.mtx,0,0,3278338008,1890815,4630444,342198
+bgo/bc/bc_gap,14,flickrEdges.mtx,0,0,1558758591,105938,4633896,89678
+bgo/bc/bc_gap,15,petster-dog-household.mtx,0,0,1837010470,256127,42963581,208968
+bgo/bc/bc_gap,16,:bn,Couldn't find suffix of /var/scratch/dbart/data/konect/converted/:bn,,,194085,924886,38598
+bgo/bc/bc_gap,17,sx-superuser.mtx,0,0,487161268,194085,924886,12011
+bgo/bc/bc_gap,18,web-Stanford.mtx,0,0,1142723,281903,2312497,236267
+bgo/bc/bc_gap,19,wikipedia_link_be_x_old.mtx,0,0,844704892,87179,2549700,42057
+bgo/bc/bc_gap,20,wikipedia_link_cy.mtx,0,0,647022685,142648,2967435,135273
+bgo/bc/bc_gap,21,wikipedia_link_te.mtx,0,0,836722183,93596,2930023,25410
+bgo/bc/bc_gap,23,wiki_talk_it.mtx,0,0,587558259,863846,1661453,267665
+bgo/bc/bc_gap,24,wiki_talk_nl.mtx,0,0,239119579,225749,565477,137186
+bgo/bc/bc_gap,25,wiki_talk_pl.mtx,0,0,208500473,155820,549603,10707

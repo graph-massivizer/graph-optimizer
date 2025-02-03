@@ -43,13 +43,8 @@ def write_graph_to_file(G, filename):
 
 if __name__ == "__main__":
     for i in range(1000):
-        n = random.randint(16, 2**16)
-        m = random.randint(16, min(n*n, 2**16))
-        p = random.random()
-        k = random.randint(2, 16)
-
+        n = random.randint(2**16, 2**21)
+        m = random.randint(n, min(n*n, 2**25))
+        print(n, m)
         G = random_unique_gnm_graph(n, m)
         write_graph_to_file(G, f'generated/gnm/random_{n}_{m}.mtx')
-
-        G = random_small_world_graph(n, k, p)
-        write_graph_to_file(G, f'generated/sw/random_{n}_{k}_{p}.mtx')

@@ -6,6 +6,7 @@
 
 #include "utils.hpp"
 #include "gap/builder.h"
+#include "command_line.h"
 
 #include "{{ header }}"
 
@@ -26,15 +27,15 @@ int main(int argc, char **argv) {
 
     std::cout << "run,status,runtime_ns" << std::endl;
 
+    {% for decl in decls %}
+    {{ decl }}
+    {% endfor %}
+
+    {% for init in inits %}
+    {{ init }}
+    {% endfor %}
+
     for (int run = 0; run < runs; run++) {
-        {% for decl in decls %}
-        {{ decl }}
-        {% endfor %}
-
-        {% for init in inits %}
-        {{ init }}
-        {% endfor %}
-
         auto start = std::chrono::steady_clock::now();
 
         int status = {{ method }} (

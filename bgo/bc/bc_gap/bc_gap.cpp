@@ -46,10 +46,6 @@ typedef double CountT;
 typedef int32_t NodeID;
 typedef int32_t WeightT;
 
-//const Graph &g, SourcePicker<Graph> &sp, NodeID num_iters
-/* Typedef to assist the autobench initialization process. */
-typedef CSRGraph<NodeID> BCGraph;
-
 void PBFS(const Graph &g, NodeID source, pvector<CountT> &path_counts,
     Bitmap &succ, vector<SlidingQueue<NodeID>::iterator> &depth_index,
     SlidingQueue<NodeID> &queue) {
@@ -60,34 +56,26 @@ void PBFS(const Graph &g, NodeID source, pvector<CountT> &path_counts,
   depth_index.push_back(queue.begin());
   queue.slide_window();
   const NodeID* g_out_start = g.out_neigh(0).begin();
-  printf("Starting parallel section\n");
-  fflush(stdout);
   #pragma omp parallel
   {
     NodeID depth = 0;
     QueueBuffer<NodeID> lqueue(queue);
     while (!queue.empty()) {
-      printf("Depth %d\n", depth);
-      fflush(stdout);
       depth++;
       #pragma omp for schedule(dynamic) nowait
       for (auto q_iter = queue.begin(); q_iter < queue.end(); q_iter++) {
         NodeID u = *q_iter;
         for (NodeID &v : g.out_neigh(u)) {
-          printf("Checking neighbor %d\n", v);
           fflush(stdout);
           if ((depths[v] == -1) &&
               (compare_and_swap(depths[v], static_cast<NodeID>(-1), depth))) {
-            printf("Adding neighbor %d\n", v);
             lqueue.push_back(v);
           }
           if (depths[v] == depth) {
-            printf("Incrementing path count for neighbor %d\n", v);
             succ.set_bit_atomic(&v - g_out_start);
             #pragma omp atomic
             path_counts[v] += path_counts[u];
           }
-          printf("Finished neighbor %d\n", v);
         }
       }
       lqueue.flush();
@@ -103,7 +91,7 @@ void PBFS(const Graph &g, NodeID source, pvector<CountT> &path_counts,
 }
 
 /* Edit: Removed timing and logging code. */
-pvector<ScoreT> Brandes(const Graph &g, NodeID source, NodeID num_iters) {
+pvector<ScoreT> Brandes(const Graph &g, CArray<int> sources, NodeID num_iters) {
   pvector<ScoreT> scores(g.num_nodes(), 0);
   pvector<CountT> path_counts(g.num_nodes());
   Bitmap succ(g.num_edges_directed());
@@ -111,19 +99,11 @@ pvector<ScoreT> Brandes(const Graph &g, NodeID source, NodeID num_iters) {
   SlidingQueue<NodeID> queue(g.num_nodes());
   const NodeID* g_out_start = g.out_neigh(0).begin();
   for (NodeID iter=0; iter < num_iters; iter++) {
-    printf("Start iteration %d\n", iter);
-    fflush(stdout);
-    printf("Source: %d\n", source);
-    fflush(stdout);
     path_counts.fill(0);
     depth_index.resize(0);
     queue.reset();
     succ.reset();
-    printf("Start PBFS\n");
-    fflush(stdout);
-    PBFS(g, source, path_counts, succ, depth_index, queue);
-    printf("Start back-propagation\n");
-    fflush(stdout);
+    PBFS(g, sources.data[iter], path_counts, succ, depth_index, queue);
     pvector<ScoreT> deltas(g.num_nodes(), 0);
     for (int d=depth_index.size()-2; d >= 0; d--) {
       #pragma omp parallel for schedule(dynamic, 64)
@@ -140,9 +120,6 @@ pvector<ScoreT> Brandes(const Graph &g, NodeID source, NodeID num_iters) {
       }
     }
   }
-  // normalize scores
-  printf("Normalize scores\n");
-  fflush(stdout);
   ScoreT biggest_score = 0;
   #pragma omp parallel for reduction(max : biggest_score)
   for (NodeID n=0; n < g.num_nodes(); n++)
@@ -153,90 +130,9 @@ pvector<ScoreT> Brandes(const Graph &g, NodeID source, NodeID num_iters) {
   return scores;
 }
 
-
-void PrintTopScores(const Graph &g, const pvector<ScoreT> &scores) {
-  vector<pair<NodeID, ScoreT>> score_pairs(g.num_nodes());
-  for (NodeID n : g.vertices())
-    score_pairs[n] = make_pair(n, scores[n]);
-  int k = 5;
-  vector<pair<ScoreT, NodeID>> top_k = TopK(score_pairs, k);
-  for (auto kvp : top_k)
-    cout << kvp.second << ":" << kvp.first << endl;
-}
-
-
-// Still uses Brandes algorithm, but has the following differences:
-// - serial (no need for atomics or dynamic scheduling)
-// - uses vector for BFS queue
-// - regenerates farthest to closest traversal order from depths
-// - regenerates successors from depths
-bool BCVerifier(const Graph &g, NodeID source, NodeID num_iters,
-                const pvector<ScoreT> &scores_to_test) {
-  pvector<ScoreT> scores(g.num_nodes(), 0);
-  for (int iter=0; iter < num_iters; iter++) {
-    // BFS phase, only records depth & path_counts
-    pvector<int> depths(g.num_nodes(), -1);
-    depths[source] = 0;
-    vector<CountT> path_counts(g.num_nodes(), 0);
-    path_counts[source] = 1;
-    vector<NodeID> to_visit;
-    to_visit.reserve(g.num_nodes());
-    to_visit.push_back(source);
-    for (auto it = to_visit.begin(); it != to_visit.end(); it++) {
-      NodeID u = *it;
-      for (NodeID v : g.out_neigh(u)) {
-        if (depths[v] == -1) {
-          depths[v] = depths[u] + 1;
-          to_visit.push_back(v);
-        }
-        if (depths[v] == depths[u] + 1)
-          path_counts[v] += path_counts[u];
-      }
-    }
-    // Get lists of vertices at each depth
-    vector<vector<NodeID>> verts_at_depth;
-    for (NodeID n : g.vertices()) {
-      if (depths[n] != -1) {
-        if (depths[n] >= static_cast<int>(verts_at_depth.size()))
-          verts_at_depth.resize(depths[n] + 1);
-        verts_at_depth[depths[n]].push_back(n);
-      }
-    }
-    // Going from farthest to closest, compute "dependencies" (deltas)
-    pvector<ScoreT> deltas(g.num_nodes(), 0);
-    for (int depth=verts_at_depth.size()-1; depth >= 0; depth--) {
-      for (NodeID u : verts_at_depth[depth]) {
-        for (NodeID v : g.out_neigh(u)) {
-          if (depths[v] == depths[u] + 1) {
-            deltas[u] += (path_counts[u] / path_counts[v]) * (1 + deltas[v]);
-          }
-        }
-        scores[u] += deltas[u];
-      }
-    }
-  }
-  // Normalize scores
-  ScoreT biggest_score = *max_element(scores.begin(), scores.end());
-  for (NodeID n : g.vertices())
-    scores[n] = scores[n] / biggest_score;
-  // Compare scores
-  bool all_ok = true;
-  for (NodeID n : g.vertices()) {
-    ScoreT delta = abs(scores_to_test[n] - scores[n]);
-    if (delta > std::numeric_limits<ScoreT>::epsilon()) {
-      cout << n << ": " << scores[n] << " != " << scores_to_test[n];
-      cout << "(" << delta << ")" << endl;
-      all_ok = false;
-    }
-  }
-  return all_ok;
-}
-
 /* Helper function that calls GAP BC, taking parameters as input that are compatible with autobench. */
-int bc_gap(const BCGraph &g, int source, CArray<int> *centrality) {
-  printf("Start BC\n");
-  fflush(stdout);
-  pvector<ScoreT> scores = Brandes(g, source, 1);
+int bc_gap(const BCGraph &G, CArray<int> sources, CArray<int> *centrality) {
+  pvector<ScoreT> scores = Brandes(G, sources, 1);
   centrality->init(scores.size());
   for (unsigned int n=0; n < scores.size(); n++)
     centrality->data[n] = scores[n];

@@ -1,0 +1,3 @@
+bgo_path,case,graph,run,status,runtime_ns,G.SIZE_VERTS,G.SIZE_EDGES,sources.SIZE
+bgo/bc/bc_gap,0,citeseer.mtx,0,0,1303976,384413,1751463,359508
+bgo/bc/bc_gap,2,amazon0601.mtx,0,0,1957832992,403394,3387388,330935

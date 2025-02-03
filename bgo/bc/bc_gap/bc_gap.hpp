@@ -6,6 +6,6 @@
 
 typedef CSRGraph<NodeID> BCGraph;
 
-int bc_gap(const BCGraph &g, int source, CArray<int> *centrality);
+int bc_gap(const BCGraph &G, CArray<int> sources, CArray<int> *centrality);
 
 #endif

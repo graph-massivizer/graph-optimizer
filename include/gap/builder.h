@@ -332,7 +332,6 @@ class BuilderBase {
       }
     }
     t.Stop();
-    PrintTime("Build Time", t.Seconds());
     if (symmetrize_)
       return CSRGraph<NodeID_, DestID_, invert>(num_nodes_, index, neighs);
     else
