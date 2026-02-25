@@ -1,0 +1,93 @@
+General idea: first show full e2e demo, then give details on parts of the e2e pipeline.
+
+1: e2e demo of UC0:
+We have an input DAG describing the workflow, as well as a hardware description of the system and an input graph.
+We push it through the graph-optimizer pipeline, most of which is hidden, and the output shows 3 things:
+1) a prediction of the e2e execution time of the workflow. This can be as simple as a single number for predicted runtime and predicted energy. Maybe some cool graphic.
+2) automatically generated "optimal" code for the given hardware. This code will be compiled and run to show correct output.
+3) validation by running the generated code and comparing it against the predicted execution time. 
+
+2: how does graph optimizer find the optimal code?:
+show two methods for performance prediction: analytical modeling, and sampling based approach.
+explain: analytical models give fastest prediction, but are difficult to make accurate for highly data dependent workloads.
+         thus, a second approach, based on graph sampling, gives more accurate predictions for a higher compute cost -> reference paper.
+show plots for sampling based approach for all the BGO implementations of UC0.
+
+3: code generation (optional, maybe this is not necessary?):
+give more details on code generation: show how all BGOs have implementations with a config, 
+how we can annotate the DAG to define which inputs are used from other BGOs,
+and how the template is used to generate the code for the workflow.
+
+bars['Worst Case'] = (766295655774.0001+5488231320.0+23261594378.0+133.0479245111368, 21883671678+169938142+659359558+4.656677357889788e-06)
+
+
+Hi everyone, my name is Duncan, and I will be presenting the demonstration of the graph-optimizer tool.
+This demonstration will consist of three parts. First, an end-to-end demonstration of the tool, showing how it can be used in practice.
+Then, we go a bit deeper into the inner workings of the tool, and how the prediction is done.
+And finally, we show how graph-optimizer can be used to automatically generate optimal CPU and GPU code.
+
+For the end-to-end pipeline, graph-optimizer takes three inputs. The workflow, as specified by the user,
+the hardware on which the workflow will be run, and the properties of the graph to which the workflow will be applied.
+We then take these inputs and apply our prediction models to predict runtime, energy, and generate optimal code.
+
+We will use the following workflow throughout this demonstration, where the arrows indicate dependencies.
+So we start with PageRank, after which the BFS and find_max BGOs can run, and the outputs of BFS and
+find_max will be used to find the shortest path from the source of the graph to the node with the highest PageRank.
+
+
+So this is how it can be used in practice. We have the graph_optimizer_end-to-end function, which takes the workflow, 
+hardware, and graph properties as input. We also see two other optional arguments: target specifies for what you want to optimize,
+since Graph-Optimizer can optimize for both Runtime and Energy. And correction is a finetuning parameter, which depends on the input graph.
+We will explain later why this is necessary and how it is used.
+As you can see, graph-optimizer is busy predicting the runtime for all implementations for the BGOs from the workflow, both CPU and GPU.
+This will take a few minutes, so I will speed it up a bit
+
+So after about 2 minutes, the predictions are in, and the optimal implementation for each BGO has been selected.
+We can now use this output to automatically generate an end-to-end implementation of this workflow in C++.
+Since I run this on a single machine with only one CPU and one GPU, BFS and find_max cannot be executed in parallel,
+so an execution plan is made where all BGOs are executed sequentially.
+We can compile... and run the code.
+
+And as you can see, the workflow took ... seconds, and ... MJ of energy.
+Let's see how this compares to our prediction.
+So we see two plots, one for runtime, one for energy, which show two bars. On the left hand side we see our prediction,
+and on the right hand side the measured runtime and energy. For the runtime we have an error of about ...percent, and for
+energy an error of about ... percent.
+
+So how much time and energy did we save by using Graph Optimizer? Well, we can use the same techniques to select the 
+worst performing implementation for each BGO to show this. This will take a while, so I will make a cut here.
+
+We see here that in the worst case, the runtime and energy can be almost two orders of magnitude higher than the optimal case.
+And this is very dependant on the specific graph at hand. For some graph structures, these might actually be the best case.
+
+
+The inputs for graph optimizer are mostly automatically obtained, except the specification of the workflow, which the user can define in JSON format
+as follows. Each BGO has a unique ID, and the dependency arrows can be specified in lists for each BGO.
+The hardware information of the CPU and GPU is automatically extracted from the machine, and microbenchmarks are also automatically executed.
+These microbenchmarks are used to calibrate the analytical performance models which we will see in a second.
+Finally, the relevant graph properties are automatically extracted from the graph.
+
+To select the optimal implementation for each BGO, we use two different performance modeling techniques. First is analytical models.
+The benefit of these is that prediction is instant, and they can be very portable across different hardware setups.
+However, they are also notoriously hard to achieve high accuracy with, especially for graph processing, and even more so for the GPU.
+This makes them infeasable for a lot of the BGO implementation we have.
+In this plot we see the predicted execution time using these analytical models for some of the BGO implementations. Each BGO has CPU and GPU implementations,
+but we only have analytical models for some of the CPU implementations
+
+Thus, we designed a new method, which was published in GraphSys 2025, which uses a small sample of the graph to execute the BGO implementation in a
+fraction of the time, but we can then use this "millibenchmark", as we call it, to give a much more accurate prediction of the execution time and energy consumption.
+But, to get the most accurate results, there has to be a human in the loop to finetune the model for the specific type of graph for each usecase.
+Which is what the correction parameter was for. This only has to be done once for each usecase.
+We use these to compliment the analytical models, and we see here the predicted execution time, or energy consumption [click button] for all implementations.
+From these, for each BGO, we take the implementation with the lowest runtime or energy consumption.
+
+Next up the automatic code generation. For this, the workflow has to be annotated with the data flow between BGOs, as demonstrated in this diagram.
+If graph optimizer is used within the Graph Massivizer ecosystem, this can be automatically done, but if used as a standalone tool, the user has to specify
+these dataflows as follows: for each BGO, there is a list containing mappings between the output parameter of one BGO and the input parameters of the other.
+
+Then, when running the end to end prediction, graph optimizer will annotate the optimal implementations in this workflow, along with the predicted execution timea
+and energy consumption, which are the implementations that are used for code generation. So we see here all the bgo parameters, and here their function calls
+with correct mapping between input and output parameters.
+
+Finally, with a small conversion, this output can directly be used as input for the graph greenifier tool, which uses the runtime and energy predictions
+in the OpenDC simulations, which you will see in a later demonstration.

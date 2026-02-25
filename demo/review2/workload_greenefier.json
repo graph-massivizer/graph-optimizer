@@ -1,0 +1,364 @@
+{
+  "tasks": [
+    {
+      "cpuCount": 1,
+      "cpuUsage": 10000,
+      "dependencies": [],
+      "energyConsumption": {
+        "Balanced":    132570740,
+        "Performance": 138910000,
+        "Power_Save":   56568220
+      },
+      "id": 0,
+      "memCapacity": 1000000,
+      "name": "pr",
+      "runTimes": { "Balanced": 2720, "Performance": 2480, "Power_Save": 3400 },
+      "submissionTime": "2022-06-29"
+    },
+    {
+      "cpuCount": 1,
+      "cpuUsage": 10000,
+      "dependencies": [0],
+      "energyConsumption": {
+        "Balanced": 979860,
+        "Performance": 1019290,
+        "Power_Save": 542910
+      },
+      "id": 1,
+      "memCapacity": 1000000,
+      "name": "find_max",
+      "runTimes": { "Balanced": 20, "Performance": 20, "Power_Save": 30 },
+      "submissionTime": "2022-06-29"
+    },
+    {
+      "cpuCount": 1,
+      "cpuUsage": 10000,
+      "dependencies": [0],
+      "energyConsumption": {
+        "Balanced": 6504710,
+        "Performance": 8933360,
+        "Power_Save": 4656660
+      },
+      "id": 2,
+      "memCapacity": 1000000,
+      "name": "bfs",
+      "runTimes": { "Balanced": 210, "Performance": 160, "Power_Save": 230 },
+      "submissionTime": "2022-06-29"
+    },
+    {
+      "cpuCount": 1,
+      "cpuUsage": 10000,
+      "dependencies": [1, 2],
+      "energyConsumption": {
+        "Balanced": 32090,
+        "Performance": 48870,
+        "Power_Save": 16290
+      },
+      "id": 3,
+      "memCapacity": 1000000,
+      "name": "find_path",
+      "runTimes": { "Balanced": 210, "Performance": 160, "Power_Save": 230 },
+      "submissionTime": "2022-06-29"
+    },
+    {
+      "cpuCount": 1,
+      "cpuUsage": 10000,
+      "dependencies": [],
+      "energyConsumption": {
+        "Balanced": 29656190,
+        "Performance": 29893620,
+        "Power_Save": 18186740
+      },
+      "id": 4,
+      "memCapacity": 1000000,
+      "name": "pr",
+      "runTimes": { "Balanced": 590, "Performance": 570, "Power_Save": 700 },
+      "submissionTime": "2022-06-29"
+    },
+    {
+      "cpuCount": 1,
+      "cpuUsage": 10000,
+      "dependencies": [4],
+      "energyConsumption": {
+        "Balanced": 1099950,
+        "Performance": 1150940,
+        "Power_Save": 662300
+      },
+      "id": 5,
+      "memCapacity": 1000000,
+      "name": "find_max",
+      "runTimes": { "Balanced": 20, "Performance": 18, "Power_Save": 30 },
+      "submissionTime": "2022-06-29"
+    },
+    {
+      "cpuCount": 1,
+      "cpuUsage": 10000,
+      "dependencies": [4],
+      "energyConsumption": {
+        "Balanced": 8219820,
+        "Performance": 8035330,
+        "Power_Save": 5936010
+      },
+      "id": 6,
+      "memCapacity": 1000000,
+      "name": "bfs",
+      "runTimes": { "Balanced": 190, "Performance": 180, "Power_Save": 240 },
+      "submissionTime": "2022-06-29"
+    },
+    {
+      "cpuCount": 1,
+      "cpuUsage": 10000,
+      "dependencies": [5, 6],
+      "energyConsumption": {
+        "Balanced": 20230,
+        "Performance": 39890,
+        "Power_Save":  16890
+      },
+      "id": 7,
+      "memCapacity": 1000000,
+      "name": "find_path",
+      "runTimes": { "Balanced": 280, "Performance": 220, "Power_Save": 330 },
+      "submissionTime": "2022-06-29"
+    },
+    {
+      "cpuCount": 1,
+      "cpuUsage": 10000,
+      "dependencies": [],
+      "energyConsumption": {
+        "Balanced": 205127540,
+        "Performance": 217185910,
+        "Power_Save": 85204440
+      },
+      "id": 8,
+      "memCapacity": 1000000,
+      "name": "pr",
+      "runTimes": { "Balanced": 4500, "Performance": 4240, "Power_Save": 5230 },
+      "submissionTime": "2022-06-29"
+    },
+    {
+      "cpuCount": 1,
+      "cpuUsage": 10000,
+      "dependencies": [8],
+      "energyConsumption": {
+        "Balanced": 5087760,
+        "Performance": 5459990,
+        "Power_Save": 3295140
+      },
+      "id": 9,
+      "memCapacity": 1000000,
+      "name": "find_max",
+      "runTimes": { "Balanced": 170, "Performance": 160, "Power_Save": 240 },
+      "submissionTime": "2022-06-29"
+    },
+    {
+      "cpuCount": 1,
+      "cpuUsage": 10000,
+      "dependencies": [8],
+      "energyConsumption": {
+        "Balanced": 21147720,
+        "Performance": 24319890,
+        "Power_Save": 11594670
+      },
+      "id": 10,
+      "memCapacity": 1000000,
+      "name": "bfs",
+      "runTimes": { "Balanced": 650, "Performance": 550, "Power_Save": 710 },
+      "submissionTime": "2022-06-29"
+    },
+    {
+      "cpuCount": 1,
+      "cpuUsage": 10000,
+      "dependencies": [9, 10],
+      "energyConsumption": {
+        "Balanced": 182930,
+        "Performance": 224640,
+        "Power_Save": 117560
+      },
+      "id": 11,
+      "memCapacity": 1000000,
+      "name": "find_path",
+      "runTimes": { "Balanced": 300, "Performance": 250, "Power_Save": 320 },
+      "submissionTime": "2022-06-29"
+    },
+    {
+      "cpuCount": 1,
+      "cpuUsage": 10000,
+      "dependencies": [],
+      "energyConsumption": {
+        "Balanced": 137927210,
+        "Performance": 139992450,
+        "Power_Save": 62669720
+      },
+      "id": 12,
+      "memCapacity": 1000000,
+      "name": "pr",
+      "runTimes": { "Balanced": 2530, "Performance": 2440, "Power_Save": 3100 },
+      "submissionTime": "2022-06-29"
+    },
+    {
+      "cpuCount": 1,
+      "cpuUsage": 10000,
+      "dependencies": [12],
+      "energyConsumption": {
+        "Balanced": 1221440,
+        "Performance": 1406030,
+        "Power_Save": 801750
+      },
+      "id": 13,
+      "memCapacity": 1000000,
+      "name": "find_max",
+      "runTimes": { "Balanced": 20, "Performance": 18, "Power_Save": 28 },
+      "submissionTime": "2022-06-29"
+    },
+    {
+      "cpuCount": 1,
+      "cpuUsage": 10000,
+      "dependencies": [12],
+      "energyConsumption": {
+        "Balanced": 7212000,
+        "Performance": 8123220,
+        "Power_Save": 4079720
+      },
+      "id": 14,
+      "memCapacity": 1000000,
+      "name": "bfs",
+      "runTimes": { "Balanced": 210, "Performance": 190, "Power_Save": 250 },
+      "submissionTime": "2022-06-29"
+    },
+    {
+      "cpuCount": 1,
+      "cpuUsage": 10000,
+      "dependencies": [13, 14],
+      "energyConsumption": {
+        "Balanced": 4300,
+        "Performance": 6040,
+        "Power_Save": 3000
+      },
+      "id": 15,
+      "memCapacity": 1000000,
+      "name": "find_path",
+      "runTimes": { "Balanced": 300, "Performance": 250, "Power_Save": 320 },
+      "submissionTime": "2022-06-29"
+    },
+    {
+      "cpuCount": 1,
+      "cpuUsage": 10000,
+      "dependencies": [],
+      "energyConsumption": {
+        "Balanced": 457944040,
+        "Performance": 457006140,
+        "Power_Save": 158021930
+      },
+      "id": 16,
+      "memCapacity": 1000000,
+      "name": "pr",
+      "runTimes": { "Balanced": 9200, "Performance": 9230, "Power_Save": 10220 },
+      "submissionTime": "2022-06-29"
+    },
+    {
+      "cpuCount": 1,
+      "cpuUsage": 10000,
+      "dependencies": [16],
+      "energyConsumption": {
+        "Balanced": 7133410,
+        "Performance": 7206290,
+        "Power_Save": 4725350
+      },
+      "id": 17,
+      "memCapacity": 1000000,
+      "name": "find_max",
+      "runTimes": { "Balanced": 260, "Performance": 250, "Power_Save": 320 },
+      "submissionTime": "2022-06-29"
+    },
+    {
+      "cpuCount": 1,
+      "cpuUsage": 10000,
+      "dependencies": [16],
+      "energyConsumption": {
+        "Balanced": 53319470,
+        "Performance": 59352990,
+        "Power_Save": 26356170
+      },
+      "id": 18,
+      "memCapacity": 1000000,
+      "name": "bfs",
+      "runTimes": { "Balanced": 1430, "Performance": 1360, "Power_Save": 1640 },
+      "submissionTime": "2022-06-29"
+    },
+    {
+      "cpuCount": 1,
+      "cpuUsage": 10000,
+      "dependencies": [17, 18],
+      "energyConsumption": {
+        "Balanced": 96440,
+        "Performance": 322470,
+        "Power_Save": 27110
+      },
+      "id": 19,
+      "memCapacity": 1000000,
+      "name": "find_path",
+      "runTimes": { "Balanced": 300, "Performance": 250, "Power_Save": 330 },
+      "submissionTime": "2022-06-29"
+    },
+    {
+      "cpuCount": 1,
+      "cpuUsage": 10000,
+      "dependencies": [],
+      "energyConsumption": {
+        "Balanced": 145699780,
+        "Performance": 154766070,
+        "Power_Save": 73313810
+      },
+      "id": 20,
+      "memCapacity": 1000000,
+      "name": "pr",
+      "runTimes": { "Balanced": 2780, "Performance": 2560, "Power_Save": 5180 },
+      "submissionTime": "2022-06-29"
+    },
+    {
+      "cpuCount": 1,
+      "cpuUsage": 10000,
+      "dependencies": [20],
+      "energyConsumption": {
+        "Balanced": 3793730,
+        "Performance": 3979920,
+        "Power_Save": 2337290
+      },
+      "id": 21,
+      "memCapacity": 1000000,
+      "name": "find_max",
+      "runTimes": { "Balanced": 140, "Performance": 120, "Power_Save": 190 },
+      "submissionTime": "2022-06-29"
+    },
+    {
+      "cpuCount": 1,
+      "cpuUsage": 10000,
+      "dependencies": [20],
+      "energyConsumption": {
+        "Balanced": 16212160,
+        "Performance": 19939520,
+        "Power_Save": 11427400
+      },
+      "id": 22,
+      "memCapacity": 1000000,
+      "name": "bfs",
+      "runTimes": { "Balanced": 450, "Performance": 350, "Power_Save": 500 },
+      "submissionTime": "2022-06-29"
+    },
+    {
+      "cpuCount": 1,
+      "cpuUsage": 10000,
+      "dependencies": [21, 22],
+      "energyConsumption": {
+        "Balanced": 104540,
+        "Performance": 140450,
+        "Power_Save": 18980
+      },
+      "id": 23,
+      "memCapacity": 1000000,
+      "name": "find_path",
+      "runTimes": { "Balanced": 300, "Performance": 250, "Power_Save": 330 },
+      "submissionTime": "2022-06-29"
+    }
+  ]
+}

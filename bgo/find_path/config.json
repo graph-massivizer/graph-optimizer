@@ -1,0 +1,28 @@
+{
+    "in_args": [
+        {
+            "id": "parents",
+            "kind": "VECTOR",
+            "value": "G.RAND_VERT_VECTOR"
+        },
+        {
+            "id": "start",
+            "kind": "VERTEX",
+            "value": "G.RAND_VERT"
+        },
+        {
+            "id": "end",
+            "kind": "VERTEX",
+            "value": "G.RAND_VERT"
+        }
+    ],
+    "out_args": [
+        {
+            "id": "path",
+            "kind": "VECTOR"
+        }
+    ],
+    "stats": [
+        "values.SIZE"
+    ]
+}

@@ -1,0 +1,76 @@
+# -------------------------------------------------
+# CUDA location detection
+# -------------------------------------------------
+
+CUDA_HOME ?= $(shell dirname $(shell dirname $(shell which nvcc 2>/dev/null)))
+
+ifeq ($(CUDA_HOME),)
+  ifeq ($(wildcard /usr/local/cuda),/usr/local/cuda)
+    CUDA_HOME := /usr/local/cuda
+  else ifeq ($(wildcard /opt/cuda),/opt/cuda)
+    CUDA_HOME := /opt/cuda
+  else
+    $(error Could not find CUDA. Please set CUDA_HOME manually.)
+  endif
+endif
+
+CUDA_INCLUDES := -I$(CUDA_HOME)/include
+CUDA_LIBDIR   := -L$(CUDA_HOME)/lib64
+CUDA_RPATH    := -Wl,-rpath,$(CUDA_HOME)/lib64
+CUDA_LIBS     := -lcudart
+
+$(info Using CUDA at $(CUDA_HOME))
+
+# -------------------------------------------------
+# Compilers
+# -------------------------------------------------
+
+CPP_COMPILER = g++
+
+# -------------------------------------------------
+# Flags
+# -------------------------------------------------
+
+CPP_STD   = -std=c++20
+CPP_FLAGS = -O3 -march=native -fPIC -fopenmp
+
+# -------------------------------------------------
+# Includes & libraries
+# -------------------------------------------------
+
+CPP_INCLUDES = {{ includes }} $(CUDA_INCLUDES)
+CPP_LIBDIR   = -L{{ lib_dir }}
+CPP_LIBS     = -lCPP_Joules -lgraphblas -llagraph -lm
+CPP_RPATH    = -Wl,-rpath,{{ lib_dir }}
+
+BGOS = {{ bgo_paths | join(' ') }}
+{% for name, lib in bgo_libs.items() %}
+{{ name }} = {{ lib }} {% endfor %}
+
+LIBS = $({{ bgo_libs | join(') $(') }})
+
+# -------------------------------------------------
+# Targets
+# -------------------------------------------------
+
+all: main
+
+main: main.o $(LIBS)
+	$(CPP_COMPILER) $(CPP_STD) $(CPP_FLAGS) $(CPP_INCLUDES) \
+	$^ $(CPP_LIBDIR) $(CPP_LIBS) $(CPP_RPATH) \
+	$(CUDA_LIBDIR) $(CUDA_LIBS) $(CUDA_RPATH) \
+	-o $@
+
+main.o: main.cpp
+	$(CPP_COMPILER) $(CPP_STD) $(CPP_FLAGS) $(CPP_INCLUDES) -c $< -o $@
+
+{% for name, path in zip(bgo_libs, bgo_paths) %}
+$({{name}}):
+	$(MAKE) -C {{path}} lib
+{% endfor %}
+
+clean:
+	rm -f main main.o
+	for d in $(BGOS); do $(MAKE) -C $$d clean; done
+
+.PHONY: all clean
