@@ -1,0 +1,14 @@
+data/large
+data/single_cc
+data/random
+data/bfs_test
+data/samples
+*__pycache__*
+benchmarks/results
+benchmarks/
+beta_testing/
+images/
+bgo/makefiles/laptop_duncan
+
+*.o
+*.a
